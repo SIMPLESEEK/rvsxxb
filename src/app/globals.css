@@ -24,3 +24,197 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-hidden {
+    display: none;
+  }
+
+  .mobile-stack {
+    @apply flex flex-col space-y-2;
+  }
+
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+}
+
+/* 表格响应式 */
+.responsive-table {
+  min-width: 100%;
+}
+
+/* 产品表格优化 */
+.product-table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  overflow: visible;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  padding: 0.25rem 0.375rem !important; /* 减少默认padding */
+}
+
+/* 紧凑表格样式 */
+.compact-table th,
+.compact-table td {
+  padding: 0.125rem 0.25rem !important; /* 更紧凑的padding */
+}
+
+/* 超紧凑表格样式 */
+.ultra-compact-table th,
+.ultra-compact-table td {
+  padding: 0.125rem 0.125rem !important; /* 最紧凑的padding */
+}
+
+/* 表格边框间距优化 */
+.product-table {
+  border-spacing: 0 !important;
+  border-collapse: collapse !important;
+}
+
+/* 进一步减少表格单元格间距 */
+.product-table th,
+.product-table td {
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* 多行文本列样式 */
+.multiline-cell {
+  white-space: pre-wrap;
+  line-height: 1.4;
+  font-size: 0.75rem;
+  position: relative; /* 确保子元素的绝对定位相对于此容器 */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 单行文本列样式 */
+.singleline-cell {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+/* 图片列样式 */
+.image-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.25rem;
+}
+
+/* 图片列单元格样式 - 确保有足够的padding */
+.image-column-cell {
+  padding: 0.5rem !important;
+}
+
+/* 窄列样式优化 - 只减少padding，不影响文字显示 */
+.narrow-column {
+  padding: 0.125rem 0.0625rem !important;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.narrow-column .singleline-cell {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0.7rem !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  width: 100% !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* 窄列中的CopyableCell优化 */
+.narrow-column span {
+  padding: 0.0625rem 0.125rem !important;
+}
+
+/* 超窄列样式（3%及以下） - 只减少padding，不影响文字显示 */
+.ultra-narrow-column {
+  padding: 0.125rem 0.03125rem !important;
+  text-align: center;
+  font-size: 0.65rem;
+  line-height: 1.1;
+}
+
+.ultra-narrow-column .singleline-cell {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0.65rem !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  width: 100% !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* 超窄列中的CopyableCell优化 */
+.ultra-narrow-column span {
+  padding: 0.03125rem 0.0625rem !important;
+}
+
+/* 确保表格严格按照设定宽度显示，但不影响内容显示 */
+.product-table th,
+.product-table td {
+  box-sizing: border-box;
+}
+
+/* 针对文本内容的容器优化 - 确保文字完整显示 */
+.narrow-column .break-words,
+.ultra-narrow-column .break-words {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 640px) {
+  .responsive-table {
+    font-size: 0.875rem;
+  }
+
+  .responsive-table th,
+  .responsive-table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .responsive-table .mobile-priority-low {
+    display: none;
+  }
+
+  .multiline-cell {
+    font-size: 0.7rem;
+  }
+
+  .singleline-cell {
+    font-size: 0.7rem;
+    line-height: 1.2;
+  }
+}
+
+/* 按钮组响应式 */
+@media (max-width: 640px) {
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .button-group > * {
+    width: 100%;
+  }
+}

@@ -1,0 +1,433 @@
+[
+  {
+    "_id": "68425af00200c2eccd3721e3",
+    "key": "order",
+    "label": "显示顺序",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "3%",
+    "bg": "#f0f0f0",
+    "order": 0.5,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721e4",
+    "key": "productType",
+    "label": "产品类型",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "6%",
+    "bg": "#e6f7e6",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721e5",
+    "key": "brand",
+    "label": "品牌",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "3%",
+    "bg": "#e6f7e6",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721e6",
+    "key": "images.display",
+    "label": "产品图",
+    "type": "image",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "6%",
+    "bg": "#e6f7e6",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721e7",
+    "key": "images.dimension",
+    "label": "尺寸图",
+    "type": "image",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "6%",
+    "bg": "#e6f7e6",
+    "order": 4,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721e8",
+    "key": "images.accessories",
+    "label": "配件图",
+    "type": "image",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "6%",
+    "bg": "#e6f7e6",
+    "order": 5,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721e9",
+    "key": "specifications.detailed",
+    "label": "详细规格参数",
+    "type": "multiline",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "20%",
+    "bg": "#e6f7e6",
+    "order": 6,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721ea",
+    "key": "specifications.brief",
+    "label": "简要规格参数",
+    "type": "singleline",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "15%",
+    "bg": "#e6f7e6",
+    "order": 7,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721eb",
+    "key": "appearance.color",
+    "label": "外观颜色",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#e6f7e6",
+    "order": 8,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721ec",
+    "key": "appearance.installation",
+    "label": "安装方式",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#e6f7e6",
+    "order": 9,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721ed",
+    "key": "appearance.cutoutSize",
+    "label": "开孔尺寸",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#e6f7e6",
+    "order": 10,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721ee",
+    "key": "control",
+    "label": "控制方式",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "6%",
+    "bg": "#e6f7e6",
+    "order": 11,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721ef",
+    "key": "notes",
+    "label": "备注",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "7%",
+    "bg": "#e6f7e6",
+    "order": 12,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721f0",
+    "key": "model",
+    "label": "产品型号",
+    "type": "text",
+    "roles": [
+      "user",
+      "dealer",
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#e6f7e6",
+    "order": 13,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721f1",
+    "key": "pricing.unitPrice",
+    "label": "含税单价",
+    "type": "number",
+    "roles": [
+      "dealer",
+      "admin"
+    ],
+    "width": "3%",
+    "bg": "#ffe7c2",
+    "order": 14,
+    "isVisible": true
+  },
+  {
+    "_id": "68425af00200c2eccd3721f2",
+    "key": "pricing.deliveryTime",
+    "label": "预计交货时间",
+    "type": "text",
+    "roles": [
+      "dealer",
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#ffe7c2",
+    "order": 15,
+    "isVisible": true
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a552",
+    "key": "vendorBody1",
+    "label": "灯体供应商1",
+    "type": "text",
+    "roles": [
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#f8f9fa",
+    "order": 16,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a553",
+    "key": "vendorBody2",
+    "label": "灯体供应商2",
+    "type": "text",
+    "roles": [
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#f8f9fa",
+    "order": 17,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a554",
+    "key": "costBody1",
+    "label": "灯体成本1",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#f8f9fa",
+    "order": 18,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a555",
+    "key": "costBody2",
+    "label": "灯体成本2",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#f8f9fa",
+    "order": 19,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a556",
+    "key": "vendorLED",
+    "label": "LED供应商",
+    "type": "text",
+    "roles": [
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#f8f9fa",
+    "order": 20,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a557",
+    "key": "costLED",
+    "label": "LED成本",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#f8f9fa",
+    "order": 21,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a558",
+    "key": "vendorDriver",
+    "label": "驱动供应商",
+    "type": "text",
+    "roles": [
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#f8f9fa",
+    "order": 22,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a559",
+    "key": "costDriver",
+    "label": "驱动成本",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#f8f9fa",
+    "order": 23,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a55a",
+    "key": "vendorLens",
+    "label": "透镜供应商",
+    "type": "text",
+    "roles": [
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#f8f9fa",
+    "order": 24,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a55b",
+    "key": "costLens",
+    "label": "透镜成本",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#f8f9fa",
+    "order": 25,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a55c",
+    "key": "vendorAccessory",
+    "label": "配件供应商",
+    "type": "text",
+    "roles": [
+      "admin"
+    ],
+    "width": "5%",
+    "bg": "#f8f9fa",
+    "order": 26,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a55d",
+    "key": "costAccessory",
+    "label": "配件成本",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#f8f9fa",
+    "order": 27,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a55e",
+    "key": "totalCost",
+    "label": "总成本",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#fff2cc",
+    "order": 28,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a55f",
+    "key": "profitMargin",
+    "label": "利润率",
+    "type": "number",
+    "roles": [
+      "admin"
+    ],
+    "width": "4%",
+    "bg": "#fff2cc",
+    "order": 29,
+    "isVisible": false
+  },
+  {
+    "_id": "684260ff8e1b9806a7b3a560",
+    "key": "internalNotes",
+    "label": "内部备注",
+    "type": "multiline",
+    "roles": [
+      "admin"
+    ],
+    "width": "6%",
+    "bg": "#f8f9fa",
+    "order": 30,
+    "isVisible": false
+  }
+]
