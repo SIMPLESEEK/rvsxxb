@@ -1,101 +1,51 @@
-// 初始化用户账户脚本
-const { MongoClient } = require('mongodb')
-const bcrypt = require('bcryptjs')
+#!/usr/bin/env node
 
-const MONGODB_URI = 'mongodb+srv://litegpt010:mCjCc5siRXLD0I50@light.hrsxzae.mongodb.net/xxb?retryWrites=true&w=majority'
+/**
+ * 初始化管理员账户脚本
+ */
 
-async function initUsers() {
-  const client = new MongoClient(MONGODB_URI)
+const { MongoClient } = require('mongodb');
+const bcrypt = require('bcryptjs');
 
+async function initAdmin() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    console.error('请设置 MONGODB_URI 环境变量');
+    process.exit(1);
+  }
+
+  const client = new MongoClient(uri);
+  
   try {
-    await client.connect()
-    console.log('🔗 连接到MongoDB成功')
+    await client.connect();
+    const db = client.db('xxb');
+    const users = db.collection('users');
 
-    const db = client.db('xxb')
-    const users = db.collection('users')
-
-    // 定义要创建的用户
-    const usersToCreate = [
-      {
-        username: 'rvsadmin',
-        email: 'admin@rvslighting.com',
-        password: 'rvs2024',
-        role: 'admin'
-      },
-      {
-        username: 'julin',
-        email: 'julin@rvslighting.com',
-        password: 'julin123',
-        role: 'dealer'
-      },
-      {
-        username: 'liu',
-        email: 'liu@rvslighting.com',
-        password: '20240723',
-        role: 'user'
-      }
-    ]
-
-    console.log('📝 开始创建用户账户...\n')
-
-    for (const userData of usersToCreate) {
-      // 检查用户是否已存在
-      const existingUser = await users.findOne({ username: userData.username })
-      if (existingUser) {
-        console.log(`⚠️  用户 ${userData.username} 已存在，跳过创建`)
-        continue
-      }
-
-      // 加密密码
-      const hashedPassword = await bcrypt.hash(userData.password, 12)
-
-      // 创建用户对象
-      const user = {
-        username: userData.username,
-        email: userData.email,
-        password: hashedPassword,
-        role: userData.role,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-
-      // 插入用户
-      const result = await users.insertOne(user)
-
-      console.log(`✅ ${userData.role === 'admin' ? '管理员' : userData.role === 'dealer' ? '经销商' : '用户'}账户创建成功!`)
-      console.log(`   用户名: ${userData.username}`)
-      console.log(`   密码: ${userData.password}`)
-      console.log(`   邮箱: ${userData.email}`)
-      console.log(`   角色: ${userData.role}`)
-      console.log(`   ID: ${result.insertedId}\n`)
+    // 检查是否已存在管理员
+    const existingAdmin = await users.findOne({ username: 'rvsadmin' });
+    if (existingAdmin) {
+      console.log('管理员账户已存在');
+      return;
     }
 
-    console.log('🎉 所有用户账户创建完成!')
-    console.log('\n📋 登录信息汇总:')
-    console.log('==========================================')
-    console.log('管理员账户:')
-    console.log('  用户名: rvsadmin')
-    console.log('  密码: rvs2024')
-    console.log('  权限: 完整管理权限')
-    console.log('')
-    console.log('经销商账户:')
-    console.log('  用户名: julin')
-    console.log('  密码: julin123')
-    console.log('  权限: 查看产品+价格+交货时间')
-    console.log('')
-    console.log('普通用户账户:')
-    console.log('  用户名: liu')
-    console.log('  密码: 20240723')
-    console.log('  权限: 查看基本产品信息')
-    console.log('==========================================')
+    // 创建管理员账户
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    await users.insertOne({
+      username: 'rvsadmin',
+      password: hashedPassword,
+      role: 'admin',
+      createdAt: new Date()
+    });
+
+    console.log('管理员账户创建成功');
+    console.log('用户名: rvsadmin');
+    console.log('密码: admin123');
 
   } catch (error) {
-    console.error('❌ 创建用户账户失败:', error)
+    console.error('创建管理员账户失败:', error);
   } finally {
-    await client.close()
-    console.log('🔌 数据库连接已关闭')
+    await client.close();
   }
 }
 
-// 运行脚本
-initUsers()
+initAdmin();

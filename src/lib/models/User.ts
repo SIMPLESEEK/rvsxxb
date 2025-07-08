@@ -13,7 +13,8 @@ export class UserModel {
 
   static async findByUsername(username: string): Promise<User | null> {
     const collection = await this.getCollection()
-    return await collection.findOne({ username })
+    // 使用正则表达式进行不区分大小写的查找
+    return await collection.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } })
   }
 
   static async findByEmail(email: string): Promise<User | null> {
@@ -107,5 +108,13 @@ export class UserModel {
     )
 
     return result.modifiedCount > 0
+  }
+
+  static async delete(userId: string): Promise<boolean> {
+    const collection = await this.getCollection()
+    const { ObjectId } = require('mongodb')
+
+    const result = await collection.deleteOne({ _id: new ObjectId(userId) })
+    return result.deletedCount > 0
   }
 }

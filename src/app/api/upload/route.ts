@@ -54,10 +54,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 验证文件大小 (5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // 验证文件大小 (10MB)
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
-        { error: '文件大小不能超过5MB' },
+        { error: '文件大小不能超过10MB' },
         { status: 400 }
       )
     }

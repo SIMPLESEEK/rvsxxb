@@ -204,15 +204,15 @@ export function ImageThumbnail({ src, alt, className, thumbnailClassName, lazy =
 
       {/* 模态框 */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-white/20"
           onClick={() => setIsOpen(false)}
         >
-          <div className="relative max-w-4xl max-h-[90vh] p-4">
+          <div className="relative w-[95vw] h-[95vh] max-w-6xl p-4 flex items-center justify-center">
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="absolute -top-2 -right-2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+              className="absolute top-2 right-2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
               title="关闭图片预览"
               aria-label="关闭图片预览"
             >

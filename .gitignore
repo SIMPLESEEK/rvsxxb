@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +40,49 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 文档和敏感信息安全
+# 忽略所有markdown文档（包含敏感信息）
+*.md
+!README.md
+
+# 忽略文档目录（可能包含敏感信息）
+/docs/
+/backups/
+
+# 忽略脚本目录（可能包含敏感配置）
+/scripts/
+
+# 忽略临时文件和调试文件
+*.log
+*.tmp
+*.temp
+test-*.html
+test-*.js
+*-debug.*
+*-test.*
+
+# 忽略可能的敏感配置文件
+config.json
+settings.json
+secrets.json
+
+# 忽略数据库备份文件
+*.sql
+*.dump
+*.backup
+
+# 忽略上传的文件
+/uploads/
+/temp/
+
+# 忽略IDE和编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 忽略操作系统文件
+Thumbs.db
+.DS_Store

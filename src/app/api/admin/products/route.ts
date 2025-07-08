@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
       productType: productData.productType,
       brand: productData.brand || '',
       model: productData.model,
+      modelLink: productData.modelLink || '', // 新增：产品型号链接
       images: {
         display: productData.images?.display || '',
         dimension: productData.images?.dimension || '',
@@ -96,7 +97,9 @@ export async function POST(request: NextRequest) {
       } : undefined,
       isActive: productData.isActive !== false,
       isNew: productData.isNew || false,
-      order: productData.order || 999
+      order: productData.order || 999,
+      // 新增：产品变量选择
+      productVariables: productData.productVariables || {}
     }
 
     // 添加其他动态字段

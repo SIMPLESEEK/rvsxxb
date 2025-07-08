@@ -25,11 +25,135 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* 基础浏览器兼容性修复 - 简化版本 */
+/* 只保留必要的修复，避免过度干预布局 */
+
+/* 防止重复页眉显示 */
+.min-h-screen.bg-gray-50 > .bg-white.shadow-sm.border-b ~ .bg-white.shadow-sm.border-b {
+  display: none !important;
+}
+
+/* 用户信息显示修复 - 防止重复 */
+.min-h-screen.bg-gray-50 .bg-blue-50.rounded-lg.border.border-blue-200 {
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: flex !important;
+  -webkit-box-align: center !important;
+  -webkit-align-items: center !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  white-space: nowrap !important;
+}
+
+/* 隐藏重复的用户信息 */
+.min-h-screen.bg-gray-50 .bg-blue-50.rounded-lg.border.border-blue-200:not(:first-of-type) {
+  display: none !important;
+}
+
+/* 标题区域修复 */
+.min-h-screen.bg-gray-50 h1 {
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: flex !important;
+  -webkit-box-align: center !important;
+  -webkit-align-items: center !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* 隐藏重复的标题 */
+.min-h-screen.bg-gray-50 h1:not(:first-of-type) {
+  display: none !important;
+}
+
+/* 夸克浏览器特殊修复 - 使用更强的选择器 */
+@media screen {
+  /* 强制页面容器样式 */
+  #main-page-container {
+    min-height: 100vh !important;
+    background-color: #f9fafb !important;
+    position: relative !important;
+  }
+
+  /* 强制页眉样式 */
+  #main-header {
+    background-color: white !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    position: relative !important;
+    z-index: 10 !important;
+  }
+
+  /* 强制页眉布局 */
+  #header-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+  }
+
+  @media (min-width: 1024px) {
+    #header-layout {
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+    }
+  }
+
+  /* 强制标题样式 */
+  #mobile-title,
+  #desktop-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* 强制用户信息样式 */
+  #mobile-user-info,
+  #desktop-user-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    white-space: nowrap !important;
+  }
+
+  /* 只隐藏重复的页眉元素，但保留管理页面的页眉 */
+  .bg-white.shadow-sm.border-b:not(#main-header):not(.admin-header) {
+    display: none !important;
+  }
+
+  /* 只隐藏产品选型表页面的重复标题 */
+  #main-page-container h1:not(#mobile-title):not(#desktop-title) {
+    display: none !important;
+  }
+
+  /* 只隐藏产品选型表页面的重复用户信息 */
+  #main-page-container .bg-blue-50.rounded-lg.border.border-blue-200:not(#mobile-user-info):not(#desktop-user-info) {
+    display: none !important;
+  }
+}
+
 /* 移动端优化 */
+@media (max-width: 1023px) {
+  /* 移动端隐藏全宽布局按钮 */
+  .mobile-hidden-layout-btn {
+    display: none !important;
+  }
+
+  /* 移动端隐藏产品管理按钮 */
+  .mobile-hidden-product-mgmt {
+    display: none !important;
+  }
+}
+
 @media (max-width: 768px) {
   .table-container {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    /* 移除已废弃的 -webkit-overflow-scrolling: touch */
   }
 
   .mobile-hidden {
@@ -43,12 +167,343 @@ body {
   .mobile-text-sm {
     font-size: 0.875rem;
   }
+
+  /* 移动端按钮优化 */
+  .mobile-button {
+    min-height: 44px; /* iOS推荐的最小触摸目标 */
+    padding: 12px 16px;
+  }
+
+  /* 移动端输入框优化 */
+  input, textarea, select {
+    font-size: 16px; /* 防止iOS缩放 */
+  }
+
+  /* 移动端表格优化 */
+  .responsive-table {
+    font-size: 11px; /* 减小基础字体 */
+  }
+
+  .responsive-table th,
+  .responsive-table td {
+    padding: 6px 2px; /* 减小内边距 */
+    min-width: 50px; /* 减小最小宽度 */
+    overflow: hidden; /* 隐藏溢出 */
+  }
+
+  /* 移动端卡片优化 */
+  .mobile-card {
+    margin: 8px;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  /* 夸克浏览器移动端页眉修复 */
+  .bg-white.shadow-sm.border-b .py-3.sm\\:py-4.lg\\:py-3 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  /* 移动端标题和用户信息布局修复 */
+  .flex.flex-col.sm\\:flex-row.sm\\:items-center {
+    display: -webkit-box !important;
+    display: -webkit-flex !important;
+    display: flex !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+    -webkit-flex-direction: column !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  @media (min-width: 640px) {
+    .flex.flex-col.sm\\:flex-row.sm\\:items-center {
+      -webkit-box-orient: horizontal !important;
+      -webkit-box-direction: normal !important;
+      -webkit-flex-direction: row !important;
+      flex-direction: row !important;
+      -webkit-box-align: center !important;
+      -webkit-align-items: center !important;
+      align-items: center !important;
+    }
+  }
 }
 
 /* 表格响应式 */
 .responsive-table {
   min-width: 100%;
 }
+
+/* 项目清单表格列宽 */
+.quotation-table {
+  table-layout: fixed !important;
+  width: 100% !important;
+  font-size: 12px !important;
+}
+
+/* 强制所有表格内容使用统一字体大小 */
+.quotation-table td,
+.quotation-table th,
+.quotation-table td *,
+.quotation-table th * {
+  font-size: 12px !important;
+}
+
+/* 技术参数列统一字体大小 */
+.quotation-table td:nth-child(5) div,
+.quotation-table td:nth-child(5) div * {
+  font-size: 12px !important;
+}
+
+/* 订货代码列统一字体大小 */
+.quotation-table td:nth-child(6),
+.quotation-table td:nth-child(6) *,
+.quotation-table td:nth-child(6) textarea,
+.quotation-table td:nth-child(6) span {
+  font-size: 10px !important;
+}
+
+/* 单价列提示文字统一字体大小，但不影响价格显示 */
+.quotation-table td:nth-child(7) div:not(.price-auto-scale),
+.quotation-table td:nth-child(7) div:not(.price-auto-scale) * {
+  font-size: 12px !important;
+}
+
+/* 价格自动缩放样式 */
+.price-auto-scale {
+  display: inline-block;
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 1.2;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+/* 根据内容长度自动调整字体大小 */
+.price-auto-scale[data-length="long"] {
+  font-size: 10px !important;
+  white-space: nowrap; /* 先尝试单行显示 */
+}
+
+.price-auto-scale[data-length="very-long"] {
+  font-size: 9px !important;
+  white-space: nowrap; /* 先尝试单行显示 */
+}
+
+.price-auto-scale[data-length="extra-long"] {
+  font-size: 8px !important;
+  white-space: nowrap; /* 先尝试单行显示 */
+}
+
+/* 如果实在太长，允许换行 */
+.price-auto-scale[data-length="force-wrap"] {
+  font-size: 8px !important;
+  white-space: normal !important;
+  word-break: break-all !important;
+  line-height: 1.1 !important;
+}
+
+/* 使用更强的选择器覆盖Tailwind - 修正为当前12列结构 */
+.quotation-table th:nth-child(1),
+.quotation-table td:nth-child(1) {
+  width: 3% !important;
+  min-width: 3% !important;
+  max-width: 3% !important;
+} /* 序号 */
+
+.quotation-table th:nth-child(2),
+.quotation-table td:nth-child(2) {
+  width: 6% !important;
+  min-width: 6% !important;
+  max-width: 6% !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  height: auto !important;
+} /* 使用区域 */
+
+/* 使用区域输入框样式 */
+.quotation-table td:nth-child(2) input {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  height: auto !important;
+  min-height: 2.4em !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+.quotation-table th:nth-child(3),
+.quotation-table td:nth-child(3) {
+  width: 5% !important;
+  min-width: 5% !important;
+  max-width: 5% !important;
+} /* 品牌 */
+
+.quotation-table th:nth-child(4),
+.quotation-table td:nth-child(4) {
+  width: 7% !important;
+  min-width: 7% !important;
+  max-width: 7% !important;
+} /* 图片 */
+
+.quotation-table th:nth-child(5),
+.quotation-table td:nth-child(5) {
+  width: 22% !important;
+  min-width: 22% !important;
+  max-width: 22% !important;
+} /* 技术参数 */
+
+.quotation-table th:nth-child(6),
+.quotation-table td:nth-child(6) {
+  width: 13% !important;
+  min-width: 13% !important;
+  max-width: 13% !important;
+} /* 订货代码 */
+
+.quotation-table th:nth-child(7),
+.quotation-table td:nth-child(7) {
+  width: 9% !important;
+  min-width: 9% !important;
+  max-width: 9% !important;
+} /* 单价 */
+
+.quotation-table th:nth-child(8),
+.quotation-table td:nth-child(8) {
+  width: 6% !important;
+  min-width: 6% !important;
+  max-width: 6% !important;
+} /* 数量 */
+
+.quotation-table th:nth-child(9),
+.quotation-table td:nth-child(9) {
+  width: 4% !important;
+  min-width: 4% !important;
+  max-width: 4% !important;
+} /* 单位 */
+
+.quotation-table th:nth-child(10),
+.quotation-table td:nth-child(10) {
+  width: 10% !important;
+  min-width: 10% !important;
+  max-width: 10% !important;
+} /* 小计 */
+
+.quotation-table th:nth-child(11),
+.quotation-table td:nth-child(11) {
+  width: 10% !important;
+  min-width: 10% !important;
+  max-width: 10% !important;
+} /* 报价备注 */
+
+/* 报价备注列：标题居中，内容左对齐 */
+.quotation-table th:nth-child(11) {
+  text-align: center !important;
+}
+
+.quotation-table td:nth-child(11) {
+  text-align: left !important;
+}
+
+/* 确保表格行能够自动调整高度以适应内容 */
+.quotation-table tr {
+  height: auto !important;
+}
+
+.quotation-table td {
+  height: auto !important;
+  vertical-align: middle !important;
+}
+
+/* 强制所有输入框自动调整高度 - 最高优先级 */
+body .quotation-table input[type="text"] {
+  height: auto !important;
+  min-height: 3em !important;
+  max-height: none !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  overflow: visible !important;
+  resize: vertical !important;
+  box-sizing: border-box !important;
+}
+
+/* 特别针对使用区域、订货代码和报价备注的输入框和textarea */
+body .quotation-table td:nth-child(2) input,
+body .quotation-table td:nth-child(6) input,
+body .quotation-table td:nth-child(11) input,
+body .quotation-table td:nth-child(2) textarea,
+body .quotation-table td:nth-child(6) textarea,
+body .quotation-table td:nth-child(11) textarea {
+  height: auto !important;
+  min-height: 4em !important;
+  max-height: none !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  overflow: hidden !important;
+  resize: none !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  background: transparent !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* 隐藏特定列textarea的滚动条 */
+body .quotation-table td:nth-child(2) textarea::-webkit-scrollbar,
+body .quotation-table td:nth-child(6) textarea::-webkit-scrollbar,
+body .quotation-table td:nth-child(11) textarea::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* 项目清单页面图片样式 - 覆盖打印样式 */
+@media screen {
+  .quotation-table img {
+    width: 60px !important;
+    height: 60px !important;
+    max-width: 60px !important;
+    max-height: 60px !important;
+    object-fit: cover !important;
+    border-radius: 4px !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* 强制所有textarea自动调整高度 */
+body .quotation-table textarea {
+  height: auto !important;
+  min-height: 3em !important;
+  max-height: none !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  overflow: hidden !important;
+  resize: none !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  background: transparent !important;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+/* 隐藏webkit浏览器的滚动条 */
+body .quotation-table textarea::-webkit-scrollbar {
+  display: none !important;
+}
+
+.quotation-table th:nth-child(12),
+.quotation-table td:nth-child(12) {
+  width: 5% !important;
+  min-width: 5% !important;
+  max-width: 5% !important;
+} /* 操作 */
 
 /* 产品表格优化 */
 .product-table {
@@ -98,6 +553,7 @@ body {
   position: relative; /* 确保子元素的绝对定位相对于此容器 */
   word-wrap: break-word;
   overflow-wrap: break-word;
+  text-align: left; /* 确保多行文本左对齐 */
 }
 
 /* 单行文本列样式 */
@@ -107,6 +563,7 @@ body {
   overflow-wrap: break-word;
   font-size: 0.75rem;
   line-height: 1.3;
+  text-align: left; /* 确保单行文本左对齐 */
 }
 
 /* 图片列样式 */
@@ -122,10 +579,70 @@ body {
   padding: 0.5rem !important;
 }
 
-/* 窄列样式优化 - 只减少padding，不影响文字显示 */
+/* 窄列样式优化 - 只减少padding，表头保持统一字体大小 */
 .narrow-column {
   padding: 0.125rem 0.0625rem !important;
   text-align: center;
+}
+
+/* 窄列表头保持统一字体大小 */
+.narrow-column.table-header {
+  font-size: 0.75rem !important; /* 与 text-xs 保持一致 */
+  line-height: 1.2;
+}
+
+/* 产品型号列样式 - 确保文字不被截断 */
+.product-table [data-column="model"],
+.product-table .model-column,
+.quotation-table td:nth-child(8) {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+/* 订货代码列样式 - 允许文字换行 */
+.quotation-table th:nth-child(6),
+.quotation-table td:nth-child(6) {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  vertical-align: middle !important;
+  text-align: center !important;
+  height: auto !important;
+}
+
+/* 订货代码输入框强制自动换行和高度调整 */
+.quotation-table td:nth-child(6) input {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  height: auto !important;
+  min-height: 2.4em !important;
+  line-height: 1.2 !important;
+  resize: vertical !important;
+  overflow: visible !important;
+  text-align: center !important;
+}
+
+.quotation-table td:nth-child(6) span {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  height: auto !important;
+  min-height: 1.2em !important;
+  line-height: 1.2 !important;
+}
+
+/* 项目清单页面表头垂直对齐 - 强制居中对齐 */
+.quotation-table th {
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+
+/* 窄列内容使用较小字体 */
+.narrow-column:not(.table-header) {
   font-size: 0.7rem;
   line-height: 1.2;
 }
@@ -146,10 +663,20 @@ body {
   padding: 0.0625rem 0.125rem !important;
 }
 
-/* 超窄列样式（3%及以下） - 只减少padding，不影响文字显示 */
+/* 超窄列样式（3%及以下） - 只减少padding，表头保持统一字体大小 */
 .ultra-narrow-column {
   padding: 0.125rem 0.03125rem !important;
   text-align: center;
+}
+
+/* 超窄列表头保持统一字体大小 */
+.ultra-narrow-column.table-header {
+  font-size: 0.75rem !important; /* 与 text-xs 保持一致 */
+  line-height: 1.2;
+}
+
+/* 超窄列内容使用较小字体 */
+.ultra-narrow-column:not(.table-header) {
   font-size: 0.65rem;
   line-height: 1.1;
 }
@@ -185,25 +712,127 @@ body {
 
 @media (max-width: 640px) {
   .responsive-table {
-    font-size: 0.875rem;
+    font-size: 0.7rem; /* 稍微增大基础字体 */
   }
 
   .responsive-table th,
   .responsive-table td {
-    padding: 0.5rem 0.25rem;
+    padding: 0.25rem 0.125rem; /* 适中的内边距 */
+    font-size: 0.6rem; /* 移动端字体 */
+    overflow: hidden !important; /* 防止滚动条 */
   }
 
   .responsive-table .mobile-priority-low {
     display: none;
   }
 
+  /* 移动端技术参数列特殊优化 */
+  .responsive-table td.align-top {
+    font-size: 0.55rem !important; /* 技术参数列更小字体 */
+    line-height: 1.1 !important;
+    max-width: 90px !important; /* 限制宽度 */
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: pre-wrap !important;
+    overflow: hidden !important; /* 隐藏溢出内容 */
+    text-overflow: clip !important; /* 不显示省略号 */
+    max-height: 60px !important; /* 限制高度 */
+  }
+
+  /* 移动端CopyableCell优化 */
+  .responsive-table td .cursor-pointer {
+    font-size: 0.55rem !important;
+    line-height: 1.1 !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    display: block !important;
+  }
+
+  /* 移动端链接点击优化 */
+  .responsive-table td a {
+    touch-action: manipulation !important;
+    -webkit-touch-callout: default !important;
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 10 !important;
+    display: inline-block !important;
+    min-height: 44px !important; /* 增加触摸目标大小 */
+    line-height: 44px !important;
+    padding: 0 4px !important;
+  }
+
   .multiline-cell {
-    font-size: 0.7rem;
+    font-size: 0.55rem !important; /* 技术参数列更小字体 */
+    line-height: 1.1 !important;
+    max-width: 90px !important; /* 进一步限制宽度 */
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: pre-wrap !important;
+    overflow: hidden !important; /* 隐藏溢出内容 */
+    text-overflow: clip !important;
+    max-height: 60px !important;
   }
 
   .singleline-cell {
-    font-size: 0.7rem;
-    line-height: 1.2;
+    font-size: 0.6rem !important;
+    line-height: 1.1 !important;
+  }
+
+  /* 移动端图片优化 */
+  .mobile-image-grid {
+    max-width: 40px;
+  }
+
+  .mobile-image-grid img {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* 移动端表格单元格优化 */
+  .responsive-table th {
+    font-size: 0.55rem !important;
+    padding: 0.25rem 0.125rem !important;
+  }
+
+  /* 隐藏所有滚动条 */
+  .responsive-table td,
+  .responsive-table th,
+  .responsive-table td *,
+  .responsive-table th *,
+  .multiline-cell,
+  .singleline-cell {
+    overflow: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .responsive-table td::-webkit-scrollbar,
+  .responsive-table th::-webkit-scrollbar,
+  .responsive-table td *::-webkit-scrollbar,
+  .responsive-table th *::-webkit-scrollbar,
+  .multiline-cell::-webkit-scrollbar,
+  .singleline-cell::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* 移动端技术参数列特殊处理 - 确保文字完全显示 */
+  .responsive-table td[style*="width: 18%"] {
+    font-size: 0.5rem !important;
+    line-height: 1.0 !important;
+    padding: 0.125rem !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .responsive-table td[style*="width: 18%"] * {
+    font-size: 0.5rem !important;
+    line-height: 1.0 !important;
+    overflow: visible !important;
+    max-height: none !important;
+    white-space: pre-wrap !important;
   }
 }
 
@@ -217,4 +846,24 @@ body {
   .button-group > * {
     width: 100%;
   }
+}
+
+/* 移动端添加到项目清单 +1 动画 */
+@keyframes mobileAddAnimation {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) translateY(-10px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1) translateY(-20px);
+  }
+}
+
+.mobile-add-animation {
+  animation: mobileAddAnimation 0.8s ease-out forwards;
 }

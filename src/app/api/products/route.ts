@@ -34,17 +34,9 @@ export async function GET(request: NextRequest) {
     const products = await ProductModel.findAll()
     console.log(`找到 ${products.length} 个产品`)
 
-    // 获取可见的列配置
-    let allColumns = await ColumnConfigModel.findVisible()
-    console.log(`找到 ${allColumns.length} 个可见列配置`)
-
-    // 如果没有列配置，初始化默认配置
-    if (allColumns.length === 0) {
-      console.log('没有找到列配置，正在初始化默认配置...')
-      await ColumnConfigModel.initializeDefaultColumns()
-      allColumns = await ColumnConfigModel.findVisible()
-      console.log(`初始化后找到 ${allColumns.length} 个可见列配置`)
-    }
+    // 获取所有列配置（包括不可见但重要的数据字段）
+    const allColumns = await ColumnConfigModel.findAll()
+    console.log(`找到 ${allColumns.length} 个列配置`)
 
     const visibleColumns = getVisibleColumns(user.role, allColumns)
     console.log(`用户 ${user.role} 可见列数: ${visibleColumns.length}`)

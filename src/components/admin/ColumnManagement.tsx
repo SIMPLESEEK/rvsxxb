@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table'
 import { Button } from '@/components/ui/Button'
 import { ColumnConfig } from '@/types/product'
-import { Loader2, Plus, Edit, Settings, X, Trash2 } from 'lucide-react'
+import { Loader2, Plus, Edit, Settings, X, Trash2, Columns, Home, Save, RefreshCw, Download } from 'lucide-react'
 
 export function ColumnManagement() {
+  const router = useRouter()
   const [columns, setColumns] = useState<ColumnConfig[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -207,6 +209,12 @@ export function ColumnManagement() {
     setShowEditForm(true)
   }
 
+  const saveColumns = async () => {
+    // 重新加载列配置，确保显示最新状态
+    await fetchColumns()
+    alert('列配置已刷新')
+  }
+
   const saveEditedColumn = async () => {
     if (!editingColumn || !editingColumn.key || !editingColumn.label) {
       alert('字段名和显示标签不能为空')
@@ -259,7 +267,9 @@ export function ColumnManagement() {
       text: '文本',
       image: '图片',
       number: '数字',
-      date: '日期'
+      date: '日期',
+      variable: '变量参数',
+      generated: '生成字段'
     }
     return labels[type as keyof typeof labels] || type
   }
@@ -273,35 +283,61 @@ export function ColumnManagement() {
     return roles.map(role => labels[role as keyof typeof labels] || role).join(', ')
   }
 
-  // 计算总列宽（只计算管理员和经销商可见的显示列）
+  // 计算总列宽 - 分别计算管理员和经销商视图
   const calculateTotalWidth = () => {
-    const visibleColumns = columns.filter(col => {
-      // 只计算显示状态的列
+    // 管理员可见的列（包括所有角色）
+    const adminVisibleColumns = columns.filter(col => {
       if (!col.isVisible) return false
-
-      // 只计算管理员和经销商可见的列
-      const hasAdminOrDealer = col.roles.includes('admin') || col.roles.includes('dealer')
-      return hasAdminOrDealer
+      return col.roles.includes('admin')
     })
 
-    let totalWidth = 0
-    let autoColumns = 0
+    // 经销商可见的列（包含dealer角色的列）
+    const dealerVisibleColumns = columns.filter(col => {
+      if (!col.isVisible) return false
+      return col.roles.includes('dealer')
+    })
 
-    visibleColumns.forEach(col => {
+    // 计算管理员视图统计
+    let adminTotalWidth = 0
+    let adminAutoColumns = 0
+    adminVisibleColumns.forEach(col => {
       if (col.width && col.width.includes('%')) {
         const width = parseInt(col.width.replace('%', ''))
         if (!isNaN(width)) {
-          totalWidth += width
+          adminTotalWidth += width
         }
       } else {
-        autoColumns++
+        adminAutoColumns++
       }
     })
 
+    // 计算经销商视图统计
+    let dealerTotalWidth = 0
+    let dealerAutoColumns = 0
+    dealerVisibleColumns.forEach(col => {
+      if (col.width && col.width.includes('%')) {
+        const width = parseInt(col.width.replace('%', ''))
+        if (!isNaN(width)) {
+          dealerTotalWidth += width
+        }
+      } else {
+        dealerAutoColumns++
+      }
+    })
+
+    // 注意：addButton列现在已经包含在列配置中，不需要手动添加
+
     return {
-      totalWidth,
-      autoColumns,
-      visibleColumnsCount: visibleColumns.length
+      admin: {
+        totalWidth: adminTotalWidth,
+        autoColumns: adminAutoColumns,
+        visibleColumnsCount: adminVisibleColumns.length
+      },
+      dealer: {
+        totalWidth: dealerTotalWidth,
+        autoColumns: dealerAutoColumns,
+        visibleColumnsCount: dealerVisibleColumns.length
+      }
     }
   }
 
@@ -328,13 +364,95 @@ export function ColumnManagement() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">列配置管理</h3>
-        <div className="flex items-center space-x-4">
-          <Button onClick={fetchColumns} variant="outline" size="sm">
-            刷新
-          </Button>
+    <div className="min-h-screen bg-gray-50">
+      {/* 页面头部 */}
+      <div className="bg-white shadow-sm border-b admin-header">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push('/admin/products-v2')}
+                  className="flex items-center gap-2 mr-4"
+                >
+                  <Home className="h-4 w-4" />
+                  返回产品管理
+                </Button>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                    <Columns className="h-8 w-8 text-blue-600" />
+                    列配置管理
+                  </h1>
+                  <p className="mt-2 text-gray-600">
+                    管理产品选型表的列显示和权限设置
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button onClick={fetchColumns} variant="outline" className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4" />
+                  刷新
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={saveColumns}
+                  disabled={isLoading}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  刷新配置
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (confirm('确定要重置所有列配置为默认值吗？此操作不可撤销。')) {
+                      initializeDefaultColumns()
+                    }
+                  }}
+                  disabled={isLoading}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  重置配置
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/admin/columns/backup', {
+                        method: 'POST',
+                        credentials: 'include'
+                      })
+                      if (response.ok) {
+                        alert('配置备份成功')
+                      } else {
+                        alert('备份失败')
+                      }
+                    } catch (error) {
+                      alert('备份失败')
+                    }
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  备份配置
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 主要内容区域 */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
           {columns.length > 0 && (
             <Button
               onClick={() => setShowAddForm(true)}
@@ -422,6 +540,8 @@ export function ColumnManagement() {
                           value={column.order}
                           onChange={(e) => updateColumn(columnId, { order: Number(e.target.value) })}
                           className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          aria-label={`${column.label}的排序`}
+                          title={`设置${column.label}的排序`}
                         />
                       </TableCell>
                       <TableCell>
@@ -470,6 +590,8 @@ export function ColumnManagement() {
                               updateColumn(columnId, { roles })
                             }}
                             className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            aria-label={`${column.label}的角色权限`}
+                            title={`设置${column.label}的角色权限`}
                           >
                             <option value="user,dealer,admin">所有用户</option>
                             <option value="dealer,admin">经销商+管理员</option>
@@ -506,46 +628,91 @@ export function ColumnManagement() {
           </div>
 
           {/* 列宽统计信息 */}
-          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-            <h4 className="text-sm font-medium text-gray-900">列宽统计（管理员/经销商视图）</h4>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <span className="text-gray-600">显示列数：</span>
-                <span className="font-medium">{widthStats.visibleColumnsCount}</span>
+          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+            <h4 className="text-sm font-medium text-gray-900">列宽统计</h4>
+
+            {/* 管理员视图统计 */}
+            <div className="border-l-4 border-blue-500 pl-4">
+              <h5 className="text-sm font-medium text-blue-700 mb-2">管理员视图</h5>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">显示列数：</span>
+                  <span className="font-medium">{widthStats.admin.visibleColumnsCount}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">固定宽度列：</span>
+                  <span className="font-medium">{widthStats.admin.visibleColumnsCount - widthStats.admin.autoColumns}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">自动宽度列：</span>
+                  <span className="font-medium">{widthStats.admin.autoColumns}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">总列宽：</span>
+                  <span className={`font-medium ${
+                    widthStats.admin.totalWidth > 100 ? 'text-red-600' :
+                    widthStats.admin.totalWidth > 90 ? 'text-orange-600' :
+                    'text-green-600'
+                  }`}>
+                    {widthStats.admin.totalWidth}%
+                  </span>
+                  {widthStats.admin.totalWidth > 100 && (
+                    <span className="ml-2 text-xs text-red-600">⚠️ 超出100%</span>
+                  )}
+                  {widthStats.admin.totalWidth > 90 && widthStats.admin.totalWidth <= 100 && (
+                    <span className="ml-2 text-xs text-orange-600">⚠️ 接近100%</span>
+                  )}
+                </div>
               </div>
-              <div>
-                <span className="text-gray-600">固定宽度列：</span>
-                <span className="font-medium">{widthStats.visibleColumnsCount - widthStats.autoColumns}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">自动宽度列：</span>
-                <span className="font-medium">{widthStats.autoColumns}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">总列宽：</span>
-                <span className={`font-medium ${
-                  widthStats.totalWidth > 100 ? 'text-red-600' :
-                  widthStats.totalWidth > 90 ? 'text-orange-600' :
-                  'text-green-600'
-                }`}>
-                  {widthStats.totalWidth}%
-                </span>
-                {widthStats.totalWidth > 100 && (
-                  <span className="ml-2 text-xs text-red-600">⚠️ 超出100%</span>
-                )}
-                {widthStats.totalWidth > 90 && widthStats.totalWidth <= 100 && (
-                  <span className="ml-2 text-xs text-orange-600">⚠️ 接近100%</span>
+              <div className="text-xs text-gray-500 mt-2">
+                <p>• 包含"添加"列（已计入总宽度）</p>
+                <p>• 自动宽度列将平均分配剩余空间：{Math.max(0, 100 - widthStats.admin.totalWidth)}%</p>
+                {widthStats.admin.autoColumns > 0 && (
+                  <p>• 每个自动列约占：{widthStats.admin.autoColumns > 0 ? Math.round(Math.max(0, 100 - widthStats.admin.totalWidth) / widthStats.admin.autoColumns * 10) / 10 : 0}%</p>
                 )}
               </div>
             </div>
 
-            {/* 详细说明 */}
-            <div className="text-xs text-gray-500 mt-3 space-y-1">
-              <p>• 只统计管理员和经销商可见的显示状态列</p>
-              <p>• 自动宽度列将平均分配剩余空间：{Math.max(0, 100 - widthStats.totalWidth)}%</p>
-              {widthStats.autoColumns > 0 && (
-                <p>• 每个自动列约占：{widthStats.autoColumns > 0 ? Math.round(Math.max(0, 100 - widthStats.totalWidth) / widthStats.autoColumns * 10) / 10 : 0}%</p>
-              )}
+            {/* 经销商视图统计 */}
+            <div className="border-l-4 border-green-500 pl-4">
+              <h5 className="text-sm font-medium text-green-700 mb-2">经销商视图</h5>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">显示列数：</span>
+                  <span className="font-medium">{widthStats.dealer.visibleColumnsCount}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">固定宽度列：</span>
+                  <span className="font-medium">{widthStats.dealer.visibleColumnsCount - widthStats.dealer.autoColumns}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">自动宽度列：</span>
+                  <span className="font-medium">{widthStats.dealer.autoColumns}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">总列宽：</span>
+                  <span className={`font-medium ${
+                    widthStats.dealer.totalWidth > 100 ? 'text-red-600' :
+                    widthStats.dealer.totalWidth > 90 ? 'text-orange-600' :
+                    'text-green-600'
+                  }`}>
+                    {widthStats.dealer.totalWidth}%
+                  </span>
+                  {widthStats.dealer.totalWidth > 100 && (
+                    <span className="ml-2 text-xs text-red-600">⚠️ 超出100%</span>
+                  )}
+                  {widthStats.dealer.totalWidth > 90 && widthStats.dealer.totalWidth <= 100 && (
+                    <span className="ml-2 text-xs text-orange-600">⚠️ 接近100%</span>
+                  )}
+                </div>
+              </div>
+              <div className="text-xs text-gray-500 mt-2">
+                <p>• 包含"添加"列（已计入总宽度）</p>
+                <p>• 自动宽度列将平均分配剩余空间：{Math.max(0, 100 - widthStats.dealer.totalWidth)}%</p>
+                {widthStats.dealer.autoColumns > 0 && (
+                  <p>• 每个自动列约占：{widthStats.dealer.autoColumns > 0 ? Math.round(Math.max(0, 100 - widthStats.dealer.totalWidth) / widthStats.dealer.autoColumns * 10) / 10 : 0}%</p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -610,6 +777,8 @@ export function ColumnManagement() {
                   <option value="image">图片</option>
                   <option value="number">数字</option>
                   <option value="date">日期</option>
+                  <option value="variable">变量参数</option>
+                  <option value="generated">生成字段</option>
                 </select>
               </div>
 
@@ -641,6 +810,8 @@ export function ColumnManagement() {
                     value={newColumn.order}
                     onChange={(e) => setNewColumn(prev => ({ ...prev, order: Number(e.target.value) }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="排序"
+                    title="设置列的排序"
                   />
                 </div>
 
@@ -707,8 +878,8 @@ export function ColumnManagement() {
 
       {/* 编辑列表单 */}
       {showEditForm && editingColumn && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-lg font-semibold">编辑列配置</h4>
               <Button
@@ -765,6 +936,8 @@ export function ColumnManagement() {
                   <option value="image">图片</option>
                   <option value="number">数字</option>
                   <option value="date">日期</option>
+                  <option value="variable">变量参数</option>
+                  <option value="generated">生成字段</option>
                 </select>
               </div>
 
@@ -862,6 +1035,8 @@ export function ColumnManagement() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   )
 }

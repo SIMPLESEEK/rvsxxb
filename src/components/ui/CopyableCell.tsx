@@ -32,7 +32,7 @@ export function CopyableCell({ value, className }: CopyableCellProps) {
 
   return (
     <div className="relative">
-      <span
+      <div
         className={cn(
           'cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors block w-full',
           className
@@ -41,11 +41,11 @@ export function CopyableCell({ value, className }: CopyableCellProps) {
         title={copied ? '' : '点击可复制文字内容'}
       >
         {value}
-      </span>
+      </div>
 
       {/* 复制成功提示 */}
       {copied && (
-        <div className="absolute top-full left-0 mt-1 px-2 py-1 bg-green-600 text-white text-xs rounded shadow-lg whitespace-nowrap z-50">
+        <div className="absolute top-full left-0 mt-1 px-2 py-1 bg-green-600 text-white text-xs rounded-md shadow-lg whitespace-nowrap z-50 border border-black">
           已复制
         </div>
       )}

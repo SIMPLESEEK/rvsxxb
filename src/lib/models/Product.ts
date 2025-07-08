@@ -136,4 +136,15 @@ export class ProductModel {
 
     return result.modifiedCount > 0
   }
+
+  static async count(): Promise<number> {
+    const collection = await this.getCollection()
+    return await collection.countDocuments()
+  }
+
+  static async deleteAll(): Promise<number> {
+    const collection = await this.getCollection()
+    const result = await collection.deleteMany({})
+    return result.deletedCount
+  }
 }

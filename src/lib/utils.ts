@@ -7,8 +7,15 @@ export function cn(...inputs: ClassValue[]) {
 export function formatPrice(price: number): string {
   return new Intl.NumberFormat('zh-CN', {
     style: 'currency',
-    currency: 'CNY'
+    currency: 'CNY',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   }).format(price)
+}
+
+// 计算市场价格（含税价格除以40%）
+export function calculateMarketPrice(unitPrice: number): number {
+  return Math.round((unitPrice / 0.4) * 100) / 100
 }
 
 export function formatDate(date: Date | string): string {
@@ -64,3 +71,58 @@ export function setNestedValue(obj: any, path: string, value: any): void {
   }, obj)
   target[lastKey] = value
 }
+
+/**
+ * 判断是否应该显示价格
+ * @param controlMethod 控制方式参数值
+ * @returns 如果是 'Onoff' 返回 true，其他返回 false
+ */
+export function shouldShowPrice(controlMethod?: string): boolean {
+  // 支持多种Onoff的表示方式，包括可能的大小写变化
+  if (!controlMethod) return false
+
+  // 标准化处理：转换为小写并移除特殊字符
+  const normalizedMethod = controlMethod.toLowerCase().replace(/[^a-z0-9]/g, '')
+
+  // 支持的Onoff格式
+  const onoffVariants = [
+    'onoff',
+    'on/off',
+    'ON/OFF',
+    'ONOFF',
+    'Onoff',
+    'OnOff',
+    'on-off',
+    'ON-OFF'
+  ]
+
+  // 检查原始值
+  if (onoffVariants.includes(controlMethod)) {
+    return true
+  }
+
+  // 检查标准化后的值
+  return normalizedMethod === 'onoff'
+}
+
+/**
+ * 获取价格显示内容
+ * @param price 价格数值
+ * @param controlMethod 控制方式参数值
+ * @param showFactoryPrice 是否显示含税价格（true）还是市场价格（false）
+ * @returns 价格字符串或提示文本
+ */
+export function getPriceDisplay(price: number, controlMethod?: string, showFactoryPrice: boolean = true): string {
+  if (!shouldShowPrice(controlMethod)) {
+    return '当前系统仅支持显示Onoff产品价格，调光产品价格请咨询销售人员'
+  }
+
+  if (!price || price <= 0) {
+    return '价格待定'
+  }
+
+  const displayPrice = showFactoryPrice ? price : (price / 0.4)
+  return `￥${displayPrice.toFixed(2)}`
+}
+
+

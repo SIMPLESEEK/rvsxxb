@@ -28,10 +28,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const columns = await ColumnConfigModel.findAll()
+    const allColumns = await ColumnConfigModel.findAll()
+
+    // 过滤掉不应该在管理界面中显示的系统内部字段
+    const systemInternalFields = ['isActive', '_id', 'productVariables']
+    const managableColumns = allColumns.filter(column =>
+      !systemInternalFields.includes(column.key)
+    )
 
     return NextResponse.json({
-      columns
+      columns: managableColumns
     })
 
   } catch (error) {

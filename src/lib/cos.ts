@@ -20,17 +20,27 @@ export interface UploadResult {
 
 /**
  * 上传文件到腾讯云COS
- * @param file 文件对象
+ * @param file 文件对象或Blob对象
  * @param folder 存储文件夹，默认为'xxb'
+ * @param customFilename 自定义文件名（可选）
  * @returns 上传结果
  */
-export async function uploadToCOS(file: File, folder: string = 'xxb'): Promise<UploadResult> {
+export async function uploadToCOS(file: File | Blob, folder: string = 'xxb', customFilename?: string): Promise<UploadResult> {
   try {
     // 生成唯一文件名
     const timestamp = Date.now()
     const randomStr = Math.random().toString(36).substring(2, 8)
-    const fileExtension = file.name.split('.').pop()
-    const filename = `${timestamp}-${randomStr}.${fileExtension}`
+
+    let filename: string
+    if (customFilename) {
+      filename = customFilename
+    } else if (file instanceof File) {
+      const fileExtension = file.name.split('.').pop()
+      filename = `${timestamp}-${randomStr}.${fileExtension}`
+    } else {
+      // 对于Blob，默认为PDF
+      filename = `${timestamp}-${randomStr}.pdf`
+    }
 
     // COS存储路径
     const cosStoragePath = `${folder}/${filename}`
@@ -44,9 +54,12 @@ export async function uploadToCOS(file: File, folder: string = 'xxb'): Promise<U
       fileType: file.type
     })
 
-    // 将File转换为Buffer
+    // 将File或Blob转换为Buffer
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
+
+    // 确定Content-Type
+    const contentType = file instanceof File ? file.type : 'application/pdf'
 
     // 上传到COS
     const result = await new Promise<any>((resolve, reject) => {
@@ -55,7 +68,7 @@ export async function uploadToCOS(file: File, folder: string = 'xxb'): Promise<U
         Region: process.env.COS_REGION!,
         Key: cosStoragePath,
         Body: buffer,
-        ContentType: file.type,
+        ContentType: contentType,
       }, (err, data) => {
         if (err) {
           console.error('COS putObject错误详情:', err)
@@ -75,7 +88,7 @@ export async function uploadToCOS(file: File, folder: string = 'xxb'): Promise<U
       cosStoragePath,
       filename,
       size: file.size,
-      mimeType: file.type
+      mimeType: contentType
     }
     
   } catch (error) {

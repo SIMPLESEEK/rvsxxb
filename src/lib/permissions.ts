@@ -5,12 +5,17 @@ export const PERMISSIONS = {
   VIEW_PRODUCTS: ['user', 'dealer', 'admin'],
   VIEW_PRICES: ['dealer', 'admin'],
   VIEW_DELIVERY_TIME: ['dealer', 'admin'],
-  
+
   // 管理权限
   MANAGE_USERS: ['admin'],
   MANAGE_PRODUCTS: ['admin'],
   MANAGE_COLUMNS: ['admin'],
   UPLOAD_FILES: ['admin'],
+
+  // 报价单权限
+  CREATE_QUOTATIONS: ['user', 'dealer', 'admin'],
+  MANAGE_TEMPLATES: ['user', 'dealer', 'admin'],
+  VIEW_COST_INFO: ['admin'], // 成本信息只有管理员能看
 } as const
 
 export function hasPermission(userRole: UserRole, permission: keyof typeof PERMISSIONS): boolean {
@@ -58,9 +63,11 @@ export function filterProductData(userRole: UserRole, product: any, visibleColum
     }
   })
   
-  // 始终包含ID
+  // 始终包含ID和状态字段
   filtered._id = product._id
   filtered.id = product.id || product._id
-  
+  filtered.isNew = product.isNew
+  filtered.isActive = product.isActive
+
   return filtered
 }

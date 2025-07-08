@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LogOut, Settings, Users, Upload, Lock } from 'lucide-react'
+import { LogOut, Settings, Users, Upload, Lock, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { User } from '@/types/auth'
 import { ChangePasswordModal } from '@/components/auth/ChangePasswordModal'
@@ -47,7 +47,7 @@ export function Navbar({ user, onLogout }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center">
+            <Link href="/product-list-v3" className="flex items-center">
               <h1 className="text-xl font-bold text-gray-900">
                 RVS Lighting 选型表
               </h1>
@@ -78,6 +78,21 @@ export function Navbar({ user, onLogout }: NavbarProps) {
                         <Upload className="h-4 w-4 mr-2" />
                         <span className="hidden lg:inline">产品管理</span>
                         <span className="lg:hidden">产品</span>
+                      </Button>
+                    </Link>
+
+                    <Link href="/admin/product-model-settings">
+                      <Button variant="ghost" size="sm">
+                        <Settings className="h-4 w-4 mr-2" />
+                        <span className="hidden lg:inline">变量设置</span>
+                        <span className="lg:hidden">变量</span>
+                      </Button>
+                    </Link>
+                    <Link href="/admin/data-cleanup">
+                      <Button variant="ghost" size="sm">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        <span className="hidden lg:inline">数据清理</span>
+                        <span className="lg:hidden">清理</span>
                       </Button>
                     </Link>
                     <Link href="/admin/columns">
