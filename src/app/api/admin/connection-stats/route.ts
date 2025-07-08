@@ -1,6 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import clientPromise, { getConnectionStats } from '@/lib/mongodb'
+import { JWTPayload } from '@/types/auth'
+
+interface ConnectionStats {
+  connectionCount: number
+  lastConnectionTime: number
+  timeSinceLastConnection: number
+}
+
+interface ServerStatus {
+  connections?: {
+    current?: number
+    available?: number
+    totalCreated?: number
+  }
+  mem?: {
+    resident?: number
+    virtual?: number
+    mapped?: number
+  }
+  opcounters?: {
+    insert?: number
+    query?: number
+    update?: number
+    delete?: number
+    getmore?: number
+    command?: number
+  }
+}
 
 // 验证管理员权限
 async function verifyAdmin(request: NextRequest) {
@@ -11,9 +39,9 @@ async function verifyAdmin(request: NextRequest) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
     return decoded.role === 'admin' ? decoded : null
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -50,14 +78,14 @@ export async function GET(request: NextRequest) {
     
     for (const collection of collections.slice(0, 10)) { // 限制前10个集合
       try {
-        const stats = await db.collection(collection.name).stats()
+        const count = await db.collection(collection.name).estimatedDocumentCount()
         collectionStats.push({
           name: collection.name,
-          count: stats.count || 0,
-          size: stats.size || 0,
-          avgObjSize: stats.avgObjSize || 0
+          count: count || 0,
+          size: 0, // 无法获取大小信息
+          avgObjSize: 0 // 无法获取平均对象大小
         })
-      } catch (error) {
+      } catch {
         // 某些集合可能无法获取统计信息
         collectionStats.push({
           name: collection.name,
@@ -146,7 +174,7 @@ export async function GET(request: NextRequest) {
 }
 
 // 生成连接池优化建议
-function generateRecommendations(connectionStats: any, serverStatus: any) {
+function generateRecommendations(connectionStats: ConnectionStats, serverStatus: ServerStatus) {
   const recommendations = []
   
   // 检查连接数

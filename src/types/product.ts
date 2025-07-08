@@ -53,8 +53,8 @@ export interface Product {
   [key: string]: any
 
   // 时间戳
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | string
+  updatedAt: Date | string
 }
 
 export interface ColumnConfig {
@@ -125,8 +125,8 @@ export interface VariableConfig {
   allowMultiple: boolean // 是否允许多选（暂时保留，当前实现为单选）
   order: number          // 显示顺序
   isActive: boolean      // 是否启用
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | string
+  updatedAt: Date | string
 }
 
 // 产品变量组合接口
@@ -139,8 +139,8 @@ export interface ProductVariant {
   generatedModel: string // 生成的完整型号
   isActive: boolean      // 是否启用
   order: number          // 排序（基于基础产品order + 小数）
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | string
+  updatedAt: Date | string
 }
 
 // 基础产品接口（用于存储不包含变量的基础信息）
@@ -177,8 +177,8 @@ export interface BaseProduct {
   isActive: boolean
   isNew: boolean
   order: number
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | string
+  updatedAt: Date | string
 }
 
 // 产品型号生成规则配置
@@ -196,6 +196,6 @@ export interface ModelGenerationRule {
   }
   isDefault: boolean     // 是否为默认规则
   isActive: boolean
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | string
+  updatedAt: Date | string
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '@/lib/models/User'
+import { JWTPayload } from '@/types/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
     const { currentPassword, newPassword } = await request.json()
 
     if (!currentPassword || !newPassword) {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 查找用户
-    const user = await UserModel.findById(decoded.userId)
+    const user = await UserModel.findById(decoded.id)
     if (!user) {
       return NextResponse.json(
         { error: '用户不存在' },
@@ -51,7 +52,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 更新密码
-    const success = await UserModel.updatePassword(decoded.userId, newPassword)
+    const userId = (decoded as any).userId || (decoded as any).id
+    const success = await UserModel.updatePassword(userId, newPassword)
     if (!success) {
       return NextResponse.json(
         { error: '密码更新失败' },

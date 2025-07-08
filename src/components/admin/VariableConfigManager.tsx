@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
-import { VariableConfig, VariableOption, VariableType } from '@/types/product'
-import { Plus, Edit, Trash2, Save, X, Settings, Eye, EyeOff, ChevronUp, ChevronDown, ArrowUpDown } from 'lucide-react'
+import { VariableConfig, VariableType } from '@/types/product'
+import { Plus, Edit, Trash2, Settings, Eye, EyeOff, ChevronUp, ChevronDown, ArrowUpDown } from 'lucide-react'
 
 export function VariableConfigManager() {
   const [configs, setConfigs] = useState<VariableConfig[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [editingConfig, setEditingConfig] = useState<VariableConfig | null>(null)
-  const [showAddForm, setShowAddForm] = useState(false)
+
   const [error, setError] = useState('')
 
   // 变量类型选项 - 只保留4个核心变量类型

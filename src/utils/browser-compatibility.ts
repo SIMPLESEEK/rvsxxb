@@ -198,7 +198,7 @@ function fixTableRendering() {
               setTimeout(() => {
                 const display = table.style.display
                 table.style.display = 'none'
-                table.offsetHeight // 触发重排
+                void table.offsetHeight // 触发重排
                 table.style.display = display
               }, 0)
             })

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProductModel } from '../../../../lib/models/Product';
 import { Product } from '@/types/product';
-import { ObjectId } from 'mongodb';
 
 // 记录API访问日志
 function logApiAccess(method: string, path: string, ip?: string) {
@@ -18,7 +17,6 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     const page = parseInt(searchParams.get('page') || '1', 10);
-    const productType = searchParams.get('type');
     
     // 限制最大请求数量
     const finalLimit = Math.min(limit, 50);

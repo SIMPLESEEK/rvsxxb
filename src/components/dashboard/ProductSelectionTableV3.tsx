@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, Fragment, useCallback } from 'react'
 import { Product, VariableType, ColumnConfig, PRODUCT_COLUMN_CONFIG } from '@/types/product'
 import { UserRole } from '@/types/auth'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table'
@@ -41,7 +41,7 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
   const [itemsPerPage, setItemsPerPage] = useState(50)
 
   // 从API获取列配置
-  const loadColumns = async () => {
+  const loadColumns = useCallback(async () => {
     try {
       const response = await fetch('/api/columns', {
         credentials: 'include'
@@ -95,7 +95,7 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
       // 设置默认的addButton列配置
       setAddButtonColumn({ key: 'addButton', label: '添加', type: 'action', width: '3%', roles: ['user', 'dealer', 'admin'], order: 36, isVisible: true })
     }
-  }
+  }, [])
 
   // 默认列配置（当API失败时使用）
   const getDefaultColumns = (): ColumnConfig[] => {
@@ -127,12 +127,7 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
     }))
   }
 
-  useEffect(() => {
-    loadColumns()
-    loadProducts()
-  }, [])
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setIsLoading(true)
       setError('')
@@ -163,7 +158,12 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    loadColumns()
+    loadProducts()
+  }, [loadColumns, loadProducts])
 
   // 智能搜索函数
   const smartSearch = (product: Product, searchTerm: string): boolean => {
@@ -587,7 +587,7 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
       {/* 移动端提示 */}
       <div className="bg-blue-50 border border-blue-200 rounded-md p-3 sm:hidden print:hidden">
         <div className="text-blue-800 text-xs">
-          💡 提示：点击"更多"按钮查看产品详细信息和选择变量参数、添加到列表
+          💡 提示：点击&quot;更多&quot;按钮查看产品详细信息和选择变量参数、添加到列表
         </div>
       </div>
 
@@ -1105,10 +1105,6 @@ function VariableSelectionButtonsV3({
 }: VariableSelectionButtonsV3Props) {
   const [availableOptions, setAvailableOptions] = useState<string[]>([])
 
-  useEffect(() => {
-    loadAvailableOptions()
-  }, [])
-
   const loadAvailableOptions = async () => {
     try {
       // 从产品的productVariables中获取该变量类型的可选项
@@ -1118,6 +1114,10 @@ function VariableSelectionButtonsV3({
       console.error('加载变量选项失败:', error)
     }
   }
+
+  useEffect(() => {
+    loadAvailableOptions()
+  }, [product.productVariables, variableType])
 
   if (availableOptions.length === 0) {
     return <div className="text-gray-400 text-xs">-</div>

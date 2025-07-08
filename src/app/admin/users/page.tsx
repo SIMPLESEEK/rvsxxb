@@ -7,7 +7,7 @@ import { useAuth } from '@/providers/AuthProvider'
 import { Loader2 } from 'lucide-react'
 
 export default function AdminUsersPage() {
-  const { user, isLoading, logout } = useAuth()
+  const { user, isLoading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {

@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ProductModel } from '@/lib/models/Product'
 import jwt from 'jsonwebtoken'
+import { JWTPayload } from '@/types/auth'
+import { Product } from '@/types/product'
 
 async function getUserFromToken(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
-  
+
   if (!token) {
     return null
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
     return decoded
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 创建产品数据，支持动态字段
-    const productToCreate: any = {
+    const productToCreate: Omit<Product, '_id' | 'id'> = {
       productType: productData.productType,
       brand: productData.brand || '',
       model: productData.model,

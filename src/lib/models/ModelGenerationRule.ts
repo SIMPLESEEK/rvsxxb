@@ -149,8 +149,6 @@ export class ModelGenerationRuleModel {
     variables: { [key in VariableType]?: string },
     ruleId?: string
   ): Promise<string> {
-    const collection = await this.getCollection()
-
     // 确保所有4个变量都有值
     const completeVariables = {
       colorTemperature: variables.colorTemperature || '3000K',

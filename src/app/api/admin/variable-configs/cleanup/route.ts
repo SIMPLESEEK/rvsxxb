@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { VariableConfigModel } from '@/lib/models/VariableConfig'
 import { VariableType } from '@/types/product'
 
 // 允许的变量类型
 const ALLOWED_TYPES: VariableType[] = ['colorTemperature', 'beamAngle', 'appearanceColor', 'controlMethod']
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // 获取所有变量配置
     const allConfigs = await VariableConfigModel.findAll()

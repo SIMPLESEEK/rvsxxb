@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
+import { JWTPayload } from '@/types/auth'
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,12 +13,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
 
     const userResponse = {
-      id: decoded.userId,
+      id: decoded.id,
       username: decoded.username,
-      email: decoded.email,
       role: decoded.role
     }
 

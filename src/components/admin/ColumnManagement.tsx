@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table'
 import { Button } from '@/components/ui/Button'
 import { ColumnConfig } from '@/types/product'
-import { Loader2, Plus, Edit, Settings, X, Trash2, Columns, Home, Save, RefreshCw, Download } from 'lucide-react'
+import { Loader2, Plus, Edit, Settings, X, Trash2, Columns, Home, RefreshCw, Download } from 'lucide-react'
 
 export function ColumnManagement() {
   const router = useRouter()
@@ -665,7 +665,7 @@ export function ColumnManagement() {
                 </div>
               </div>
               <div className="text-xs text-gray-500 mt-2">
-                <p>• 包含"添加"列（已计入总宽度）</p>
+                <p>• 包含&quot;添加&quot;列（已计入总宽度）</p>
                 <p>• 自动宽度列将平均分配剩余空间：{Math.max(0, 100 - widthStats.admin.totalWidth)}%</p>
                 {widthStats.admin.autoColumns > 0 && (
                   <p>• 每个自动列约占：{widthStats.admin.autoColumns > 0 ? Math.round(Math.max(0, 100 - widthStats.admin.totalWidth) / widthStats.admin.autoColumns * 10) / 10 : 0}%</p>
@@ -707,7 +707,7 @@ export function ColumnManagement() {
                 </div>
               </div>
               <div className="text-xs text-gray-500 mt-2">
-                <p>• 包含"添加"列（已计入总宽度）</p>
+                <p>• 包含&quot;添加&quot;列（已计入总宽度）</p>
                 <p>• 自动宽度列将平均分配剩余空间：{Math.max(0, 100 - widthStats.dealer.totalWidth)}%</p>
                 {widthStats.dealer.autoColumns > 0 && (
                   <p>• 每个自动列约占：{widthStats.dealer.autoColumns > 0 ? Math.round(Math.max(0, 100 - widthStats.dealer.totalWidth) / widthStats.dealer.autoColumns * 10) / 10 : 0}%</p>

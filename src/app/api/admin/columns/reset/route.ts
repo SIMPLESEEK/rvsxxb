@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ColumnConfigModel } from '@/lib/models/ColumnConfig'
 import jwt from 'jsonwebtoken'
+import { JWTPayload } from '@/types/auth'
 
 async function getUserFromToken(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
-  
+
   if (!token) {
     return null
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
     return decoded
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -29,11 +30,10 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('开始重置列配置...')
-    
+
     // 删除所有现有的列配置
-    const collection = await ColumnConfigModel.getCollection()
-    const deleteResult = await collection.deleteMany({})
-    console.log('删除了', deleteResult.deletedCount, '个现有列配置')
+    const deletedCount = await ColumnConfigModel.deleteAll()
+    console.log('删除了', deletedCount, '个现有列配置')
     
     // 重新初始化默认列配置
     await ColumnConfigModel.initializeDefaultColumns()
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       message: '列配置重置成功',
-      deletedCount: deleteResult.deletedCount,
+      deletedCount: deletedCount,
       newColumnsCount: newColumns.length,
       columns: newColumns.map(col => ({
         key: col.key,

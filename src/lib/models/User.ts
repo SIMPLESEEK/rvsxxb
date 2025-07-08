@@ -24,7 +24,6 @@ export class UserModel {
 
   static async findById(id: string): Promise<User | null> {
     const collection = await this.getCollection()
-    const { ObjectId } = require('mongodb')
     return await collection.findOne({ _id: new ObjectId(id) })
   }
 
@@ -66,7 +65,6 @@ export class UserModel {
 
   static async updateRole(userId: string, role: UserRole): Promise<boolean> {
     const collection = await this.getCollection()
-    const { ObjectId } = require('mongodb')
     
     const result = await collection.updateOne(
       { _id: new ObjectId(userId) },
@@ -92,7 +90,6 @@ export class UserModel {
 
   static async updatePassword(userId: string, newPassword: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const { ObjectId } = require('mongodb')
 
     // 加密新密码
     const hashedPassword = await bcrypt.hash(newPassword, 12)
@@ -112,7 +109,6 @@ export class UserModel {
 
   static async delete(userId: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const { ObjectId } = require('mongodb')
 
     const result = await collection.deleteOne({ _id: new ObjectId(userId) })
     return result.deletedCount > 0

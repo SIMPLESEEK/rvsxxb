@@ -50,10 +50,10 @@ export async function POST(request: NextRequest) {
       user: userResponse
     }, { status: 201 })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Register error:', error)
     
-    if (error.message === '用户名已存在' || error.message === '邮箱已存在') {
+    if (error instanceof Error && (error.message === '用户名已存在' || error.message === '邮箱已存在')) {
       return NextResponse.json(
         { error: error.message },
         { status: 409 }

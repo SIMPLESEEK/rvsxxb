@@ -1,5 +1,5 @@
 import clientPromise from '../mongodb'
-import { VariableConfig, VariableOption, VariableType } from '@/types/product'
+import { VariableConfig, VariableType } from '@/types/product'
 import { ObjectId } from 'mongodb'
 
 export class VariableConfigModel {

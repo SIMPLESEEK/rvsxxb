@@ -2,22 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ProductModel } from '@/lib/models/Product'
 import { ColumnConfigModel } from '@/lib/models/ColumnConfig'
 import { getVisibleColumns, filterProductData } from '@/lib/permissions'
-import jwt from 'jsonwebtoken'
-
-async function getUserFromToken(request: NextRequest) {
-  const token = request.cookies.get('auth-token')?.value
-  
-  if (!token) {
-    return null
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
-    return decoded
-  } catch (error) {
-    return null
-  }
-}
+import { getUserFromToken } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import clientPromise, { getConnectionStats } from '@/lib/mongodb'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // 检查MongoDB连接
     const startTime = Date.now()

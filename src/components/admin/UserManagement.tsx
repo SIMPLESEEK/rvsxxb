@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/Button'
 import { User, UserRole } from '@/types/auth'
 import { formatDate } from '@/lib/utils'
-import { Loader2, Save, Shield, Mail, Trash2, Users, RefreshCw, UserPlus, Settings, Home } from 'lucide-react'
+import { Loader2, Shield, Mail, Trash2, Users, RefreshCw, UserPlus, Home } from 'lucide-react'
 import { ResetPasswordModal } from './ResetPasswordModal'
 import CreateUserModal from './CreateUserModal'
 

@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { VariableConfigModel } from '@/lib/models/VariableConfig'
 import { ColumnConfigModel } from '@/lib/models/ColumnConfig'
 import { getUserFromToken } from '@/lib/auth'
+import { VariableConfig } from '@/types/product'
 
 // 自动创建或更新对应的列配置
-async function syncVariableToColumn(variableConfig: any) {
+async function syncVariableToColumn(variableConfig: VariableConfig) {
   try {
     // 根据变量类型确定列的key
-    let columnKey = variableConfig.type
+    let columnKey: string = variableConfig.type
 
     // 特殊映射：某些变量类型需要映射到不同的列key
     const keyMapping: { [key: string]: string } = {

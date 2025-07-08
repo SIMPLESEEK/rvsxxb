@@ -29,7 +29,7 @@ export default function ProductListV3Page() {
     const cleanup = applyQuarkHeaderFix()
 
     return cleanup
-  }, [user])
+  }, [])
 
   // 如果正在加载或用户未认证，显示加载状态
   if (isLoading) {

@@ -1,5 +1,6 @@
 import clientPromise from '../mongodb'
 import { ColumnConfig } from '@/types/product'
+import { ObjectId } from 'mongodb'
 
 export class ColumnConfigModel {
   private static async getCollection() {
@@ -48,7 +49,6 @@ export class ColumnConfigModel {
 
   static async update(id: string, columnData: Partial<ColumnConfig>): Promise<boolean> {
     const collection = await this.getCollection()
-    const { ObjectId } = require('mongodb')
 
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
@@ -60,10 +60,15 @@ export class ColumnConfigModel {
 
   static async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const { ObjectId } = require('mongodb')
 
     const result = await collection.deleteOne({ _id: new ObjectId(id) })
     return result.deletedCount > 0
+  }
+
+  static async deleteAll(): Promise<number> {
+    const collection = await this.getCollection()
+    const result = await collection.deleteMany({})
+    return result.deletedCount
   }
 
   static async initializeDefaultColumns(): Promise<void> {

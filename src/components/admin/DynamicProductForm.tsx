@@ -32,26 +32,6 @@ export function DynamicProductForm({ product, onSubmit, onCancel, isLoading }: D
   })
   const [showModelLinkInput, setShowModelLinkInput] = useState(false)
 
-  // 获取列配置和变量配置
-  useEffect(() => {
-    fetchColumns()
-    loadVariableConfigs()
-  }, [])
-
-  // 初始化表单数据
-  useEffect(() => {
-    if (columns.length > 0) {
-      initializeFormData()
-    }
-  }, [columns, product])
-
-  // 初始化链接输入框显示状态
-  useEffect(() => {
-    if (product?.modelLink) {
-      setShowModelLinkInput(true)
-    }
-  }, [product])
-
   const fetchColumns = async () => {
     try {
       const response = await fetch('/api/admin/columns', {
@@ -637,6 +617,26 @@ export function DynamicProductForm({ product, onSubmit, onCancel, isLoading }: D
         )
     }
   }
+
+  // 获取列配置和变量配置
+  useEffect(() => {
+    fetchColumns()
+    loadVariableConfigs()
+  }, [])
+
+  // 初始化表单数据
+  useEffect(() => {
+    if (columns.length > 0) {
+      initializeFormData()
+    }
+  }, [columns, product])
+
+  // 初始化链接输入框显示状态
+  useEffect(() => {
+    if (product?.modelLink) {
+      setShowModelLinkInput(true)
+    }
+  }, [product])
 
   if (isLoadingColumns) {
     return (

@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { UserModel } from '@/lib/models/User'
 import jwt from 'jsonwebtoken'
+import { JWTPayload } from '@/types/auth'
 
 async function getUserFromToken(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
-  
+
   if (!token) {
     return null
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
     return decoded
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -32,7 +33,8 @@ export async function GET(request: NextRequest) {
 
     // 移除密码字段
     const safeUsers = users.map(user => {
-      const { password, ...safeUser } = user
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _, ...safeUser } = user
       return safeUser
     })
 
@@ -105,17 +107,18 @@ export async function POST(request: NextRequest) {
     })
 
     // 返回用户信息（不包含密码）
-    const { password: _, ...safeUser } = newUser
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _pwd, ...safeUser } = newUser
 
     return NextResponse.json({
       message: '用户创建成功',
       user: safeUser
     }, { status: 201 })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Create user error:', error)
 
-    if (error.message === '用户名已存在' || error.message === '邮箱已存在') {
+    if (error instanceof Error && (error.message === '用户名已存在' || error.message === '邮箱已存在')) {
       return NextResponse.json(
         { error: error.message },
         { status: 409 }
@@ -200,7 +203,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     // 防止删除当前登录的管理员
-    if (user.id === userId || user._id === userId) {
+    const currentUserId = (user as any).id || (user as any)._id
+    if (currentUserId === userId) {
       return NextResponse.json(
         { error: '不能删除当前登录的用户' },
         { status: 400 }

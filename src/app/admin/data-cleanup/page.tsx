@@ -12,12 +12,22 @@ interface CleanupStats {
   projectListSaves: number
 }
 
+interface ClearResults {
+  success: boolean
+  message: string
+  details?: string
+  deletedProducts?: number
+  deletedBaseProducts?: number
+  deletedProductVariants?: number
+  deletedProjectListSaves?: number
+}
+
 export default function DataCleanupPage() {
   const router = useRouter()
   const [stats, setStats] = useState<CleanupStats | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isClearing, setIsClearing] = useState(false)
-  const [clearResults, setClearResults] = useState<unknown>(null)
+  const [clearResults, setClearResults] = useState<ClearResults | null>(null)
 
   const loadStats = async () => {
     setIsLoading(true)

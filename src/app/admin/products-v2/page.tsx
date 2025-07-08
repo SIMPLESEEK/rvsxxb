@@ -3,12 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import { Search, Plus, Edit3, Trash2, RefreshCw, AlertCircle, CheckSquare, Square, BarChart3, Home, Settings, Columns, Loader2, Package, Database } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { ImageThumbnail } from '@/components/ui/ImageThumbnail'
 import { DynamicProductForm } from '@/components/admin/DynamicProductForm'
 import { CopyableCell } from '@/components/ui/CopyableCell'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { useAuth } from '@/providers/AuthProvider'
 
 interface Product {
@@ -45,7 +43,7 @@ interface Product {
 }
 
 export default function ProductsV2Page() {
-  const { user, isLoading: authLoading, logout } = useAuth()
+  const { user, isLoading: authLoading } = useAuth()
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -140,14 +138,14 @@ export default function ProductsV2Page() {
     setEditingProduct(product)
   }
 
-  const handleSaveProduct = async (productData: unknown) => {
+  const handleSaveProduct = async (productData: Record<string, unknown>) => {
     setIsLoading(true)
     try {
       const isEditing = !!editingProduct
       const url = '/api/admin/products'
       const method = isEditing ? 'PUT' : 'POST'
 
-      const payload = isEditing
+      const payload = isEditing && editingProduct
         ? { id: editingProduct._id, ...productData }
         : productData
 

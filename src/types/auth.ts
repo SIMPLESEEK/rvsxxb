@@ -32,3 +32,9 @@ export interface RegisterData {
   password: string
   role?: UserRole
 }
+
+export interface JWTPayload {
+  id: string
+  username: string
+  role: UserRole
+}

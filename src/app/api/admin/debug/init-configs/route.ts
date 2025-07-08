@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('初始化配置数据失败:', error)
     return NextResponse.json(
-      { error: '初始化配置数据失败', details: error.message },
+      { error: '初始化配置数据失败', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('检查配置数据状态失败:', error)
     return NextResponse.json(
-      { error: '检查配置数据状态失败', details: error.message },
+      { error: '检查配置数据状态失败', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

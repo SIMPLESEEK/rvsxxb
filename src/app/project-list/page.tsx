@@ -7,14 +7,12 @@ import { useAuth } from '@/providers/AuthProvider'
 import { Loader2, ArrowLeft, Trash2, Plus, Minus, Download, Printer, Save, FileText, Settings, Edit } from 'lucide-react'
 import { Product } from '@/types/product'
 import { QuotationTemplate } from '@/types/quotation'
+import { ProjectListSave } from '@/lib/models/ProjectListSave'
 import { formatPrice, shouldShowPrice } from '@/lib/utils'
 import { CompanyInfoEditor } from '@/components/quotation/CompanyInfoEditor'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
+
 import * as XLSX from 'xlsx'
-import { saveAs } from 'file-saver'
 import './print.css'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 interface ProjectListItem {
   productId: string
@@ -53,7 +51,7 @@ export default function ProjectListPage() {
   const [isLoadingTemplate, setIsLoadingTemplate] = useState(true)
   const [showTemplateEditor, setShowTemplateEditor] = useState(false)
   const [showImportDialog, setShowImportDialog] = useState(false)
-  const [savedProjects, setSavedProjects] = useState<any[]>([])
+  const [savedProjects, setSavedProjects] = useState<ProjectListSave[]>([])
   const [isLoadingSaves, setIsLoadingSaves] = useState(false)
 
   // 客户信息状态
@@ -89,7 +87,8 @@ export default function ProjectListPage() {
 
     // 对于onoff产品，使用添加时保存的价格或产品默认价格
     // 优先使用 savedUnitPrice，然后是 unitPrice，最后是产品默认价格
-    return (item as any).savedUnitPrice || (item as any).unitPrice || item.product.pricing?.unitPrice || 0
+    const itemWithPrice = item as ProjectListItem & { savedUnitPrice?: number; unitPrice?: number }
+    return itemWithPrice.savedUnitPrice || itemWithPrice.unitPrice || item.product.pricing?.unitPrice || 0
   }
 
   // 获取产品的价格类型标识
@@ -155,7 +154,7 @@ export default function ProjectListPage() {
   }
 
   // 更新项目字段
-  const updateProjectField = (productId: string, field: 'useArea' | 'projectCode' | 'remarks' | 'model' | 'specifications' | 'unitPrice' | 'quantity' | 'productremark', value: string | number) => {
+  const updateProjectField = (productId: string, field: 'useArea' | 'projectCode' | 'remarks' | 'model' | 'specifications' | 'unitPrice' | 'quantity' | 'productremark' | 'unitPriceInput', value: string | number | undefined) => {
     setProjectFields(prev => ({
       ...prev,
       [productId]: {
@@ -614,294 +613,7 @@ export default function ProjectListPage() {
     }
   }
 
-  // 生成PDF并上传到COS的通用函数
-  const generateAndUploadPDF = async (source: 'print' | 'export' | 'browser-print') => {
-    try {
-      console.log(`开始生成PDF并上传到COS (来源: ${source})...`)
 
-      // 确保报价单号存在
-      let currentQuotationNumber = quotationNumber
-      if (!currentQuotationNumber || currentQuotationNumber.trim() === '') {
-        console.log('报价单号为空，正在生成...')
-        currentQuotationNumber = generateQuotationNumber()
-      }
-
-      // 获取要转换的元素
-      const element = document.getElementById('quotation-content')
-      if (!element) {
-        throw new Error('找不到报价单内容元素')
-      }
-
-      // 临时设置元素样式以确保正确的尺寸和减少空白
-      const originalStyle = {
-        width: element.style.width,
-        height: element.style.height,
-        maxWidth: element.style.maxWidth,
-        overflow: element.style.overflow,
-        padding: element.style.padding,
-        margin: element.style.margin
-      }
-
-      // 设置固定宽度和自动高度，移除多余空白
-      element.style.width = '210mm' // A4宽度
-      element.style.maxWidth = '210mm'
-      element.style.height = 'auto'
-      element.style.overflow = 'visible'
-      element.style.margin = '0'
-      element.style.padding = '10mm'
-
-      // 临时隐藏所有按钮和编辑元素
-      const buttonsAndEdits = element.querySelectorAll('button, .print\\:hidden')
-      const originalDisplays: string[] = []
-
-      buttonsAndEdits.forEach((el, index) => {
-        try {
-          const htmlEl = el as HTMLElement
-          if (htmlEl && htmlEl.style) {
-            originalDisplays[index] = htmlEl.style.display || ''
-            htmlEl.style.display = 'none'
-          }
-        } catch (e) {
-          console.warn('隐藏元素失败:', e)
-        }
-      })
-
-      // 临时添加PDF导出模式类
-      element.classList.add('pdf-export-mode')
-
-      // 等待样式应用
-      await new Promise(resolve => setTimeout(resolve, 100))
-
-      // 使用html2canvas截图 - 优化设置以减小文件大小和空白区域
-      const canvas = await html2canvas(element, {
-        scale: 1.2, // 适中的分辨率
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        width: element.offsetWidth, // 使用实际显示宽度而不是scrollWidth
-        height: element.offsetHeight, // 使用实际显示高度而不是scrollHeight
-        x: 0,
-        y: 0,
-        scrollX: 0,
-        scrollY: 0,
-        ignoreElements: (element) => {
-          // 忽略可能导致问题的元素
-          const htmlElement = element as HTMLElement
-          return element.classList.contains('print:hidden') ||
-                 element.tagName === 'BUTTON' ||
-                 htmlElement.style.display === 'none' ||
-                 htmlElement.style.visibility === 'hidden'
-        },
-        onclone: async (clonedDoc) => {
-          try {
-            console.log('generateAndUploadPDF onclone开始处理...')
-
-            // 在克隆的文档中强制显示打印内容
-            const printElements = clonedDoc.querySelectorAll('.hidden.print\\:block, .hidden.print\\:inline')
-            printElements.forEach(el => {
-              const htmlEl = el as HTMLElement
-              htmlEl.style.display = 'block'
-              htmlEl.style.visibility = 'visible'
-            })
-
-            // 隐藏非打印元素
-            const hiddenElements = clonedDoc.querySelectorAll('.print\\:hidden')
-            hiddenElements.forEach(el => {
-              const htmlEl = el as HTMLElement
-              htmlEl.style.display = 'none'
-            })
-
-            // 调试：检查技术参数和订货代码数据
-            console.log('PDF生成调试 - 项目清单数据:')
-            console.log('projectList:', projectList.map(item => ({
-              productId: item.productId,
-              model: item.product.model,
-              generatedModel: item.generatedModel,
-              specifications: item.product.specifications?.detailed,
-              selectedVariables: item.selectedVariables
-            })))
-            console.log('projectFields:', projectFields)
-
-            // 在克隆文档中调整价格字体大小
-            const clonedPriceElements = clonedDoc.querySelectorAll('.price-auto-scale')
-            clonedPriceElements.forEach((element) => {
-              const htmlElement = element as HTMLElement
-              const text = htmlElement.textContent || ''
-              const length = text.length
-
-              // 移除之前的长度属性
-              htmlElement.removeAttribute('data-length')
-
-              // 根据文本长度设置不同的字体大小和换行策略
-              if (length > 20) {
-                // 超长文本：强制换行
-                htmlElement.setAttribute('data-length', 'force-wrap')
-              } else if (length > 15) {
-                // 很长文本：最小字体，单行显示
-                htmlElement.setAttribute('data-length', 'extra-long')
-              } else if (length > 12) {
-                // 长文本：缩小字体，单行显示
-                htmlElement.setAttribute('data-length', 'very-long')
-              } else if (length > 9) {
-                // 中等长度：稍微缩小字体
-                htmlElement.setAttribute('data-length', 'long')
-              }
-              // length <= 9: 正常显示，不设置data-length属性
-            })
-
-            // 在克隆的文档中添加打印样式和基础样式
-            const style = clonedDoc.createElement('style')
-            style.textContent = `
-              /* 基础样式 */
-              * {
-                color: rgb(0, 0, 0) !important;
-                background-color: rgb(255, 255, 255) !important;
-                border-color: rgb(0, 0, 0) !important;
-              }
-              .bg-gray-50 { background-color: rgb(249, 250, 251) !important; }
-              .text-gray-900 { color: rgb(17, 24, 39) !important; }
-              .text-gray-600 { color: rgb(75, 85, 99) !important; }
-              .border-gray-300 { border-color: rgb(209, 213, 219) !important; }
-
-              /* 打印样式 - 模拟@media print */
-              .print\\:hidden { display: none !important; }
-              .hidden { display: none !important; }
-              .print\\:block { display: block !important; }
-              .print\\:inline { display: inline !important; }
-              .hidden.print\\:block { display: block !important; }
-              .hidden.print\\:inline { display: inline !important; }
-
-              /* 确保打印内容可见 */
-              .quotation-table .hidden.print\\:block,
-              .quotation-table .hidden.print\\:inline {
-                display: block !important;
-                visibility: visible !important;
-              }
-            `
-            clonedDoc.head.appendChild(style)
-
-            // 处理图片的CORS问题 - 将所有图片转换为base64
-            const clonedImages = clonedDoc.querySelectorAll('img')
-            console.log(`找到 ${clonedImages.length} 个图片需要处理`)
-
-            for (let i = 0; i < clonedImages.length; i++) {
-              const img = clonedImages[i]
-              try {
-                if (!img.src || img.src.startsWith('data:')) {
-                  continue // 跳过已经是base64的图片
-                }
-
-                console.log(`处理图片 ${i + 1}:`, img.src)
-
-                // 创建canvas来转换图片
-                const canvas = clonedDoc.createElement('canvas')
-                const ctx = canvas.getContext('2d')
-
-                // 创建新的图片对象
-                const newImg = new Image()
-                newImg.crossOrigin = 'anonymous'
-
-                await new Promise((resolve) => {
-                  newImg.onload = () => {
-                    canvas.width = newImg.width
-                    canvas.height = newImg.height
-                    ctx?.drawImage(newImg, 0, 0)
-
-                    try {
-                      const dataURL = canvas.toDataURL('image/jpeg', 0.8)
-                      img.src = dataURL
-                      console.log(`图片 ${i + 1} 转换成功`)
-                      resolve(true)
-                    } catch (e) {
-                      console.warn(`图片 ${i + 1} 转换失败:`, e)
-                      resolve(false)
-                    }
-                  }
-                  newImg.onerror = () => {
-                    console.warn(`图片 ${i + 1} 加载失败:`, img.src)
-                    resolve(false)
-                  }
-                  newImg.src = img.src
-                })
-              } catch (error) {
-                console.warn(`处理图片 ${i + 1} 失败:`, error)
-              }
-            }
-
-            console.log('generateAndUploadPDF onclone处理完成')
-          } catch (error) {
-            console.error('generateAndUploadPDF onclone处理失败:', error)
-          }
-        }
-      })
-
-      // 恢复原始状态
-      buttonsAndEdits.forEach((el, index) => {
-        try {
-          const htmlEl = el as HTMLElement
-          if (htmlEl && htmlEl.style) {
-            htmlEl.style.display = originalDisplays[index]
-          }
-        } catch (e) {
-          console.warn('恢复元素显示失败:', e)
-        }
-      })
-      element.classList.remove('pdf-export-mode')
-
-      // 恢复原始样式
-      element.style.width = originalStyle.width
-      element.style.height = originalStyle.height
-      element.style.maxWidth = originalStyle.maxWidth
-      element.style.overflow = originalStyle.overflow
-      element.style.margin = originalStyle.margin
-      element.style.padding = originalStyle.padding
-
-      // 创建PDF - 使用JPEG格式以减小文件大小
-      const imgData = canvas.toDataURL('image/jpeg', 0.8) // 使用JPEG格式，质量0.8
-      const pdf = new jsPDF('p', 'mm', 'a4')
-      const imgWidth = 210
-      const pageHeight = 297
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-
-      let heightLeft = imgHeight
-      let position = 0
-
-      // 添加第一页
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
-      heightLeft -= pageHeight
-
-      // 如果内容超过一页，添加更多页面
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight
-        pdf.addPage()
-        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
-      }
-
-      // 将PDF转换为Blob
-      const pdfBlob = pdf.output('blob')
-
-      // 检查文件大小
-      const fileSizeMB = pdfBlob.size / (1024 * 1024)
-      console.log(`PDF文件大小: ${fileSizeMB.toFixed(2)}MB`)
-
-      if (pdfBlob.size > 20 * 1024 * 1024) {
-        console.warn('PDF文件过大，跳过上传')
-        throw new Error(`PDF文件过大 (${fileSizeMB.toFixed(2)}MB)，无法上传到云端`)
-      }
-
-      // 上传到COS
-      const filename = `${currentQuotationNumber}_${source}_${Date.now()}.pdf`
-      await uploadFileToCOS(pdfBlob, filename, 'application/pdf', currentQuotationNumber)
-
-      console.log(`PDF生成并上传完成 (来源: ${source})`)
-      return true
-    } catch (error) {
-      console.error(`生成并上传PDF失败 (来源: ${source}):`, error)
-      throw error
-    }
-  }
 
   // 清理图片错误的函数
   const cleanupImageErrors = () => {
@@ -1257,8 +969,7 @@ export default function ProjectListPage() {
   }
 
   return (
-    <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <main className="max-w-7xl mx-auto py-3 sm:py-6 px-2 sm:px-4 lg:px-8">
         {/* 项目清单内容 */}
         {!mounted || isLoadingList ? (
@@ -1277,7 +988,7 @@ export default function ProjectListPage() {
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">项目清单为空</h3>
             <p className="text-gray-600 mb-6">
-              请返回产品选型表，点击"+"按钮添加产品到项目清单
+              请返回产品选型表，点击&quot;+&quot;按钮添加产品到项目清单
             </p>
             <div className="flex items-center justify-center space-x-4">
               <button
@@ -1409,14 +1120,13 @@ export default function ProjectListPage() {
               {/* PC端头部布局 */}
               <div className="hidden sm:block print:hidden p-4">
                 {/* LOGO和报价单字样居中 */}
-                <div className="text-center mb-4" style={{ textAlign: 'center' }}>
-                  <div className="inline-flex items-center space-x-6" style={{ display: 'inline-flex', alignItems: 'center', gap: '24px' }}>
+                <div className="text-center mb-4">
+                  <div className="inline-flex items-center space-x-6">
                     {template?.companyInfo?.logo && (
                       <img
                         src={template.companyInfo.logo}
                         alt="公司LOGO"
-                        className="h-10 w-auto"
-                        style={{ height: '40px', width: 'auto', maxHeight: '40px', maxWidth: '120px', objectFit: 'contain' }}
+                        className="h-10 w-auto max-h-10 max-w-[120px] object-contain"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
                         }}
@@ -1466,14 +1176,13 @@ export default function ProjectListPage() {
               {/* PC端打印时显示的头部 */}
               <div className="hidden print:block p-4">
                 {/* LOGO和报价单字样居中 */}
-                <div className="text-center mb-4" style={{ textAlign: 'center' }}>
-                  <div className="inline-flex items-center space-x-6" style={{ display: 'inline-flex', alignItems: 'center', gap: '24px' }}>
+                <div className="text-center mb-4">
+                  <div className="inline-flex items-center space-x-6">
                     {template?.companyInfo?.logo && (
                       <img
                         src={template.companyInfo.logo}
                         alt="公司LOGO"
-                        className="h-10 w-auto"
-                        style={{ height: '40px', width: 'auto', maxHeight: '40px', maxWidth: '120px', objectFit: 'contain' }}
+                        className="h-10 w-auto max-h-10 max-w-[120px] object-contain"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
                         }}
@@ -2561,6 +2270,5 @@ export default function ProjectListPage() {
         </div>
       )}
       </div>
-    </ErrorBoundary>
   )
 }

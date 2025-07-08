@@ -22,10 +22,6 @@ export function ProductVariantTable({ userRole }: ProductVariantTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
 
-  useEffect(() => {
-    loadProducts()
-  }, [searchTerm, selectedProductType, selectedBrand])
-
   const loadProducts = async () => {
     try {
       setIsLoading(true)
@@ -61,6 +57,10 @@ export function ProductVariantTable({ userRole }: ProductVariantTableProps) {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadProducts()
+  }, [searchTerm, selectedProductType, selectedBrand])
 
   const handleAddToProject = (product: Product, selectedVariables: { [key in VariableType]?: string }) => {
     try {

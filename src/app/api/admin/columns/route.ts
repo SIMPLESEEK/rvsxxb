@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ColumnConfigModel } from '@/lib/models/ColumnConfig'
 import jwt from 'jsonwebtoken'
+import { JWTPayload } from '@/types/auth'
 
 async function getUserFromToken(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
-  
+
   if (!token) {
     return null
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
     return decoded
-  } catch (error) {
+  } catch {
     return null
   }
 }
