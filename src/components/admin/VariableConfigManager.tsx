@@ -9,7 +9,7 @@ export function VariableConfigManager() {
   const [configs, setConfigs] = useState<VariableConfig[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [editingConfig, setEditingConfig] = useState<VariableConfig | null>(null)
-
+  const [showAddForm, setShowAddForm] = useState(false)
   const [error, setError] = useState('')
 
   // 变量类型选项 - 只保留4个核心变量类型
@@ -348,7 +348,7 @@ function VariableConfigForm({
     if (newOption.value.trim() && newOption.code.trim()) {
       setFormData(prev => ({
         ...prev,
-        options: [...prev.options, { ...newOption }]
+        options: [...prev.options, { ...newOption, order: prev.options.length }]
       }))
       setNewOption({ value: '', code: '', isDefault: false })
     }

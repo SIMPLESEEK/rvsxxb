@@ -62,7 +62,7 @@ export interface ColumnConfig {
   id?: string
   key: string
   label: string
-  type: 'text' | 'image' | 'number' | 'date' | 'multiline' | 'singleline' | 'variable' | 'generated'
+  type: 'text' | 'image' | 'number' | 'date' | 'multiline' | 'singleline' | 'variable' | 'generated' | 'action'
   roles: string[]
   width?: string
   bg?: string              // 背景色 - 参考xxbws设计

@@ -26,7 +26,7 @@ export class ModelGenerationRuleModel {
 
   static async findById(id: string): Promise<ModelGenerationRule | null> {
     const collection = await this.getCollection()
-    return await collection.findOne({ _id: new ObjectId(id) })
+    return await collection.findOne({ _id: new ObjectId(id) } as any)
   }
 
   static async create(ruleData: Omit<ModelGenerationRule, '_id' | 'createdAt' | 'updatedAt'>): Promise<ModelGenerationRule> {
@@ -56,13 +56,13 @@ export class ModelGenerationRuleModel {
     // 如果设置为默认规则，先取消其他默认规则
     if (updateData.isDefault) {
       await collection.updateMany(
-        { _id: { $ne: new ObjectId(id) }, isDefault: true },
+        { _id: { $ne: new ObjectId(id) }, isDefault: true } as any,
         { $set: { isDefault: false, updatedAt: new Date() } }
       )
     }
     
     const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       { 
         $set: { 
           ...updateData, 
@@ -72,12 +72,12 @@ export class ModelGenerationRuleModel {
       { returnDocument: 'after' }
     )
 
-    return result.value
+    return (result as any)?.value || null
   }
 
   static async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const result = await collection.deleteOne({ _id: new ObjectId(id) })
+    const result = await collection.deleteOne({ _id: new ObjectId(id) } as any)
     return result.deletedCount > 0
   }
 

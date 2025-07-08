@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { ProductVariantSelector } from './ProductVariantSelector'
+
 import { Product, VariableType } from '@/types/product'
 import { UserRole } from '@/types/auth'
 import { Loader2, Search, Filter } from 'lucide-react'
@@ -85,11 +85,11 @@ export function ProductVariantTable({ userRole }: ProductVariantTableProps) {
       if (existingIndex >= 0) {
         // 如果已存在，增加数量
         existingList[existingIndex].quantity += 1
-        message = `${baseProduct.name} (${Object.values(selectedVariables).join(', ')}) 数量已增加到 ${existingList[existingIndex].quantity}`
+        message = `${product.model} (${Object.values(selectedVariables).join(', ')}) 数量已增加到 ${existingList[existingIndex].quantity}`
       } else {
         // 如果不存在，添加新项目
         existingList.push(productItem)
-        message = `已将 ${baseProduct.name} (${Object.values(selectedVariables).join(', ')}) 添加到项目清单`
+        message = `已将 ${product.model} (${Object.values(selectedVariables).join(', ')}) 添加到项目清单`
       }
 
       // 保存到sessionStorage（临时存储）
@@ -281,13 +281,10 @@ export function ProductVariantTable({ userRole }: ProductVariantTableProps) {
             </p>
           </div>
         ) : (
-          paginatedProducts.map((product) => (
-            <ProductVariantSelector
-              key={product._id}
-              product={product}
-              onAddToProject={handleAddToProject}
-            />
-          ))
+          <div className="text-center py-8">
+            <p className="text-gray-500">ProductVariantSelector 组件暂时不可用</p>
+            <p className="text-sm text-gray-400 mt-2">请使用产品选型表进行产品选择</p>
+          </div>
         )}
       </div>
     </div>

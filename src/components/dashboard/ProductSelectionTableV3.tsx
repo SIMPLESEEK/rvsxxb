@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ImageThumbnail } from '@/components/ui/ImageThumbnail'
 import { CopyableCell } from '@/components/ui/CopyableCell'
 import { ClickableModelCell } from '@/components/ui/ClickableModelCell'
-import { VariableSelectionButtonsV3 } from '@/components/dashboard/VariableSelectionButtonsV3'
+
 import { Loader2, Search, Check, Plus, Info } from 'lucide-react'
 import { getNestedValue, shouldShowPrice, getPriceDisplay } from '@/lib/utils'
 
@@ -1179,15 +1179,15 @@ function ProductDetailDialog({ product, selectedVariables, generatedModel, rende
   }
   // 定义需要在对话框中显示的列信息
   const dialogColumns: ColumnConfig[] = [
-    { key: 'model', label: '产品型号', type: 'text' as const, width: '100%' },
-    { key: 'colorTemperature', label: '色温', type: 'variable' as const, width: '100%' },
-    { key: 'beamAngle', label: '光束角', type: 'variable' as const, width: '100%' },
-    { key: 'appearanceColor', label: '外观颜色', type: 'variable' as const, width: '100%' },
-    { key: 'controlMethod', label: '控制方式', type: 'variable' as const, width: '100%' },
-    { key: 'productremark', label: '产品备注', type: 'text' as const, width: '100%' },
-    { key: 'orderCode', label: '订货代码', type: 'text' as const, width: '100%' },
-    { key: 'pricing.unitPrice', label: '含税价格', type: 'number' as const, width: '100%' },
-    { key: 'pricing.deliveryTime', label: '预计交货时间', type: 'number' as const, width: '100%' }
+    { key: 'model', label: '产品型号', type: 'text' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 0, isVisible: true },
+    { key: 'colorTemperature', label: '色温', type: 'variable' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 1, isVisible: true },
+    { key: 'beamAngle', label: '光束角', type: 'variable' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 2, isVisible: true },
+    { key: 'appearanceColor', label: '外观颜色', type: 'variable' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 3, isVisible: true },
+    { key: 'controlMethod', label: '控制方式', type: 'variable' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 4, isVisible: true },
+    { key: 'productremark', label: '产品备注', type: 'text' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 5, isVisible: true },
+    { key: 'orderCode', label: '订货代码', type: 'text' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 6, isVisible: true },
+    { key: 'pricing.unitPrice', label: '含税价格', type: 'number' as const, width: '100%', roles: ['admin', 'dealer'], order: 7, isVisible: true },
+    { key: 'pricing.deliveryTime', label: '预计交货时间', type: 'number' as const, width: '100%', roles: ['admin', 'dealer', 'user'], order: 8, isVisible: true }
   ]
 
   return (

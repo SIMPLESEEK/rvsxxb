@@ -18,7 +18,7 @@ export function DynamicProductForm({ product, onSubmit, onCancel, isLoading }: D
   const [columns, setColumns] = useState<ColumnConfig[]>([])
   const [isLoadingColumns, setIsLoadingColumns] = useState(true)
   const [uploadingImages, setUploadingImages] = useState<{ [key: string]: boolean }>({})
-  const fileInputRefs = useRef<{ [key: string]: React.RefObject<HTMLInputElement> }>({})
+  const fileInputRefs = useRef<{ [key: string]: React.RefObject<HTMLInputElement | null> }>({})
 
   // 新增：变量配置相关状态
   const [variableConfigs, setVariableConfigs] = useState<VariableConfig[]>([])

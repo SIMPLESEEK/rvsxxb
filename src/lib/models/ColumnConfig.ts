@@ -51,7 +51,7 @@ export class ColumnConfigModel {
     const collection = await this.getCollection()
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       { $set: columnData }
     )
 
@@ -61,7 +61,7 @@ export class ColumnConfigModel {
   static async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
 
-    const result = await collection.deleteOne({ _id: new ObjectId(id) })
+    const result = await collection.deleteOne({ _id: new ObjectId(id) } as any)
     return result.deletedCount > 0
   }
 

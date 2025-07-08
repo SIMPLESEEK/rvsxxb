@@ -26,5 +26,6 @@ export function verifyToken(token: string): JWTPayload | null {
 }
 
 export function generateToken(payload: JWTPayload, expiresIn: string = '7d'): string {
-  return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn })
+  const secret = process.env.JWT_SECRET || 'default-secret'
+  return (jwt.sign as any)(payload, secret, { expiresIn })
 }

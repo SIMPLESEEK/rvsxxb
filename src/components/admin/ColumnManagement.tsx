@@ -929,7 +929,7 @@ export function ColumnManagement() {
                 </label>
                 <select
                   value={editingColumn.type}
-                  onChange={(e) => setEditingColumn(prev => prev ? { ...prev, type: e.target.value } : null)}
+                  onChange={(e) => setEditingColumn(prev => prev ? { ...prev, type: e.target.value as ColumnConfig['type'] } : null)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="text">文本</option>

@@ -16,7 +16,7 @@ export class ProductModel {
 
   static async findById(id: string): Promise<Product | null> {
     const collection = await this.getCollection()
-    return await collection.findOne({ _id: new ObjectId(id) })
+    return await collection.findOne({ _id: new ObjectId(id) } as any)
   }
 
   static async create(productData: Omit<Product, '_id' | 'createdAt' | 'updatedAt'>): Promise<Product> {
@@ -32,8 +32,8 @@ export class ProductModel {
       updatedAt: new Date()
     }
 
-    const result = await collection.insertOne(product)
-    return { ...product, _id: result.insertedId.toString() }
+    const result = await collection.insertOne(product as any)
+    return { ...product, _id: result.insertedId.toString() } as Product
   }
 
   static async update(id: string, productData: Partial<Product>): Promise<boolean> {

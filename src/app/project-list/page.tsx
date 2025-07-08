@@ -116,7 +116,7 @@ export default function ProjectListPage() {
   }
 
   // 项目相关字段状态
-  const [projectFields, setProjectFields] = useState<{[key: string]: {useArea: string, projectCode: string, remarks: string, model: string, specifications: string, unitPrice: number, quantity: number, productremark: string}}>({})
+  const [projectFields, setProjectFields] = useState<{[key: string]: {useArea: string, projectCode: string, remarks: string, model: string, specifications: string, unitPrice: number, quantity: number, productremark: string, unitPriceInput?: string}}>({})
 
   // 生成增强的技术参数（包含4个变量参数）
   const generateEnhancedSpecifications = (item: ProjectListItem): string => {
@@ -949,7 +949,7 @@ export default function ProjectListPage() {
       alert('Excel文件已导出成功')
     } catch (error) {
       console.error('导出Excel失败:', error)
-      alert('导出Excel失败，请重试')
+      alert(`导出Excel失败: ${error instanceof Error ? error.message : '请重试'}`)
     } finally {
       setIsProcessing(false)
     }
@@ -988,7 +988,7 @@ export default function ProjectListPage() {
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">项目清单为空</h3>
             <p className="text-gray-600 mb-6">
-              请返回产品选型表，点击&quot;+&quot;按钮添加产品到项目清单
+              请返回产品选型表，点击&ldquo;+&rdquo;按钮添加产品到项目清单
             </p>
             <div className="flex items-center justify-center space-x-4">
               <button
@@ -1657,7 +1657,7 @@ export default function ProjectListPage() {
                           value={(() => {
                             // 优先使用用户正在输入的原始值，避免小数点被截断
                             if (projectFields[item.productId]?.unitPriceInput !== undefined) {
-                              return projectFields[item.productId].unitPriceInput
+                              return projectFields[item.productId]?.unitPriceInput || ''
                             }
                             return shouldShowUnitPrice(item) ?
                               (getDisplayPrice(item) > 0 ? getDisplayPrice(item).toString() : '') :
@@ -2242,7 +2242,7 @@ export default function ProjectListPage() {
                             <div className="flex items-center space-x-2 ml-4">
                               <button
                                 type="button"
-                                onClick={() => handleImport(save._id)}
+                                onClick={() => save._id && handleImport(save._id)}
                                 className="inline-flex items-center px-3 py-1 border border-green-300 rounded text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 transition-colors"
                               >
                                 <Download className="w-4 h-4 mr-1" />
@@ -2250,7 +2250,7 @@ export default function ProjectListPage() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => handleDeleteSave(save._id)}
+                                onClick={() => save._id && handleDeleteSave(save._id)}
                                 className="inline-flex items-center px-3 py-1 border border-red-300 rounded text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 transition-colors"
                                 style={{ backgroundColor: '#fef2f2', color: '#b91c1c', borderColor: '#fca5a5' }}
                               >

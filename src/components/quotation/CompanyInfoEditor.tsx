@@ -84,7 +84,7 @@ export function CompanyInfoEditor({ onSave }: CompanyInfoEditorProps) {
 
   const handleCancel = () => {
     if (template) {
-      setFormData(template.companyInfo)
+      setFormData(template.companyInfo as any)
       setQuotationNotes(template.quotationNotes || '1.报价为人民币（RMB）价格，报价含税，报价有效期6个月；\n2.报价为工厂交易价，不含运费；\n3.产品质保期2年，如非正常使用损坏，费用自理，厂家提供协助维护；')
     }
     setIsEditing(false)
