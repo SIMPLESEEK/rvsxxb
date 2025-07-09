@@ -59,7 +59,7 @@ export class QuotationTemplateModel {
     if (!template) {
       // 根据角色创建默认模板
       const defaultCompanyInfo = ROLE_DEFAULT_COMPANY_INFO[userRole] || ROLE_DEFAULT_COMPANY_INFO.user
-      template = await this.createOrUpdate(userId, defaultCompanyInfo)
+      template = await this.createOrUpdate(userId, defaultCompanyInfo as QuotationTemplate['companyInfo'])
     }
 
     return template

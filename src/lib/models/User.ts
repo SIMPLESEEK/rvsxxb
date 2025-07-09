@@ -24,7 +24,7 @@ export class UserModel {
 
   static async findById(id: string): Promise<User | null> {
     const collection = await this.getCollection()
-    return await collection.findOne({ _id: new ObjectId(id) })
+    return await collection.findOne({ _id: new ObjectId(id) } as any)
   }
 
   static async create(userData: {
@@ -67,9 +67,9 @@ export class UserModel {
     const collection = await this.getCollection()
     
     const result = await collection.updateOne(
-      { _id: new ObjectId(userId) },
-      { 
-        $set: { 
+      { _id: new ObjectId(userId) } as any,
+      {
+        $set: {
           role,
           updatedAt: new Date()
         }
@@ -95,7 +95,7 @@ export class UserModel {
     const hashedPassword = await bcrypt.hash(newPassword, 12)
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(userId) },
+      { _id: new ObjectId(userId) } as any,
       {
         $set: {
           password: hashedPassword,
@@ -110,7 +110,7 @@ export class UserModel {
   static async delete(userId: string): Promise<boolean> {
     const collection = await this.getCollection()
 
-    const result = await collection.deleteOne({ _id: new ObjectId(userId) })
+    const result = await collection.deleteOne({ _id: new ObjectId(userId) } as any)
     return result.deletedCount > 0
   }
 }

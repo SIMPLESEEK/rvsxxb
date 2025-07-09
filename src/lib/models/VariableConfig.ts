@@ -26,7 +26,7 @@ export class VariableConfigModel {
 
   static async findById(id: string): Promise<VariableConfig | null> {
     const collection = await this.getCollection()
-    return await collection.findOne({ _id: new ObjectId(id) })
+    return await collection.findOne({ _id: new ObjectId(id) } as any)
   }
 
   static async create(configData: Omit<VariableConfig, '_id' | 'createdAt' | 'updatedAt'>): Promise<VariableConfig> {
@@ -60,7 +60,7 @@ export class VariableConfigModel {
     console.log('VariableConfigModel.update - safeUpdateData:', safeUpdateData)
 
     const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       {
         $set: {
           ...safeUpdateData,
@@ -77,7 +77,7 @@ export class VariableConfigModel {
 
   static async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const result = await collection.deleteOne({ _id: new ObjectId(id) })
+    const result = await collection.deleteOne({ _id: new ObjectId(id) } as any)
     return result.deletedCount > 0
   }
 

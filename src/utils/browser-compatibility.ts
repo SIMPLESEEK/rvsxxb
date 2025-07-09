@@ -189,17 +189,18 @@ function fixTableRendering() {
           
           // 为新添加的表格元素应用修复
           if (element.tagName === 'TABLE' || element.querySelector('table')) {
-            const tables = element.tagName === 'TABLE' ? [element] : element.querySelectorAll('table')
-            
+            const tables = element.tagName === 'TABLE' ? [element as HTMLTableElement] : Array.from(element.querySelectorAll('table'))
+
             tables.forEach((table) => {
               table.classList.add('quark-browser-fix')
-              
+
               // 强制重新计算布局
               setTimeout(() => {
-                const display = table.style.display
-                table.style.display = 'none'
-                void table.offsetHeight // 触发重排
-                table.style.display = display
+                const htmlTable = table as HTMLTableElement
+                const display = htmlTable.style.display
+                htmlTable.style.display = 'none'
+                void htmlTable.offsetHeight // 触发重排
+                htmlTable.style.display = display
               }, 0)
             })
           }

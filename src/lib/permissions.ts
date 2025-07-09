@@ -19,7 +19,7 @@ export const PERMISSIONS = {
 } as const
 
 export function hasPermission(userRole: UserRole, permission: keyof typeof PERMISSIONS): boolean {
-  return PERMISSIONS[permission].includes(userRole)
+  return (PERMISSIONS[permission] as readonly UserRole[]).includes(userRole)
 }
 
 export function canViewColumn(userRole: UserRole, columnRoles: string[]): boolean {

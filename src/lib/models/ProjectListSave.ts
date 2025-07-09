@@ -36,7 +36,7 @@ export class ProjectListSaveModel {
   // 根据ID获取暂存
   static async findById(id: string): Promise<ProjectListSave | null> {
     const collection = await this.getCollection()
-    return await collection.findOne({ _id: new ObjectId(id) })
+    return await collection.findOne({ _id: new ObjectId(id) } as any)
   }
 
   // 创建新的暂存
@@ -58,7 +58,7 @@ export class ProjectListSaveModel {
     const collection = await this.getCollection()
     
     await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       {
         $set: {
           ...saveData,
@@ -73,10 +73,10 @@ export class ProjectListSaveModel {
   // 删除暂存
   static async delete(id: string, userId: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const result = await collection.deleteOne({ 
+    const result = await collection.deleteOne({
       _id: new ObjectId(id),
       userId // 确保只能删除自己的暂存
-    })
+    } as any)
     return result.deletedCount > 0
   }
 

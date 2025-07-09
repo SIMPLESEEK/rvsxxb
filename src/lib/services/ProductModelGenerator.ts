@@ -376,17 +376,22 @@ export class ProductModelGenerator {
           const beamCode = tempBeamPart.substring(2, 4)
 
           // 反向查找变量值
-          variables.colorTemperature = await VariableConfigModel.getValueByCode('colorTemperature', tempCode)
-          variables.beamAngle = await VariableConfigModel.getValueByCode('beamAngle', beamCode)
+          const colorTempValue = await VariableConfigModel.getValueByCode('colorTemperature', tempCode)
+          const beamAngleValue = await VariableConfigModel.getValueByCode('beamAngle', beamCode)
+
+          variables.colorTemperature = colorTempValue || undefined
+          variables.beamAngle = beamAngleValue || undefined
         }
       }
 
       if (parts.length >= 2) {
-        variables.appearanceColor = await VariableConfigModel.getValueByCode('appearanceColor', parts[1])
+        const appearanceColorValue = await VariableConfigModel.getValueByCode('appearanceColor', parts[1])
+        variables.appearanceColor = appearanceColorValue || undefined
       }
 
       if (parts.length >= 3) {
-        variables.controlMethod = await VariableConfigModel.getValueByCode('controlMethod', parts[2])
+        const controlMethodValue = await VariableConfigModel.getValueByCode('controlMethod', parts[2])
+        variables.controlMethod = controlMethodValue || undefined
       }
 
       return variables

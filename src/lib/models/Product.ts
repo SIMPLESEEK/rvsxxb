@@ -40,7 +40,7 @@ export class ProductModel {
     const collection = await this.getCollection()
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       {
         $set: {
           ...productData,
@@ -54,7 +54,7 @@ export class ProductModel {
 
   static async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const result = await collection.deleteOne({ _id: new ObjectId(id) })
+    const result = await collection.deleteOne({ _id: new ObjectId(id) } as any)
     return result.deletedCount > 0
   }
 
@@ -87,7 +87,7 @@ export class ProductModel {
     const collection = await this.getCollection()
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       {
         $set: {
           order: order,
@@ -106,7 +106,7 @@ export class ProductModel {
     if (!product) return false
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       {
         $set: {
           isActive: !product.isActive,
@@ -125,7 +125,7 @@ export class ProductModel {
     if (!product) return false
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) } as any,
       {
         $set: {
           isFeatured: !product.isFeatured,

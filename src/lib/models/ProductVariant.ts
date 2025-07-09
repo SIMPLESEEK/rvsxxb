@@ -29,7 +29,7 @@ export class ProductVariantModel {
 
   static async findById(id: string): Promise<ProductVariant | null> {
     const collection = await this.getCollection()
-    return await collection.findOne({ _id: new ObjectId(id) })
+    return await collection.findOne({ _id: new ObjectId(id) } as any)
   }
 
   static async findByModel(generatedModel: string): Promise<ProductVariant | null> {
@@ -54,22 +54,22 @@ export class ProductVariantModel {
     const collection = await this.getCollection()
     
     const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { 
-        $set: { 
-          ...updateData, 
-          updatedAt: new Date() 
-        } 
+      { _id: new ObjectId(id) } as any,
+      {
+        $set: {
+          ...updateData,
+          updatedAt: new Date()
+        }
       },
       { returnDocument: 'after' }
     )
 
-    return result.value
+    return result || null
   }
 
   static async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const result = await collection.deleteOne({ _id: new ObjectId(id) })
+    const result = await collection.deleteOne({ _id: new ObjectId(id) } as any)
     return result.deletedCount > 0
   }
 
