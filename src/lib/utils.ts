@@ -75,7 +75,7 @@ export function setNestedValue(obj: any, path: string, value: any): void {
 /**
  * 判断是否应该显示价格
  * @param controlMethod 控制方式参数值
- * @returns 如果是 'Onoff' 返回 true，其他返回 false
+ * @returns 如果是 'Onoff' 或 '不需要' 返回 true，其他返回 false
  */
 export function shouldShowPrice(controlMethod?: string): boolean {
   // 支持多种Onoff的表示方式，包括可能的大小写变化
@@ -96,13 +96,20 @@ export function shouldShowPrice(controlMethod?: string): boolean {
     'ON-OFF'
   ]
 
+  // 支持的"不需要"格式
+  const notNeededVariants = [
+    '不需要',
+    'N',
+    'n'
+  ]
+
   // 检查原始值
-  if (onoffVariants.includes(controlMethod)) {
+  if (onoffVariants.includes(controlMethod) || notNeededVariants.includes(controlMethod)) {
     return true
   }
 
   // 检查标准化后的值
-  return normalizedMethod === 'onoff'
+  return normalizedMethod === 'onoff' || normalizedMethod === 'n'
 }
 
 /**

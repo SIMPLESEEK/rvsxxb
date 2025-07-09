@@ -118,7 +118,7 @@ export default function ProjectListPage() {
   // 项目相关字段状态
   const [projectFields, setProjectFields] = useState<{[key: string]: {useArea: string, projectCode: string, remarks: string, model: string, specifications: string, unitPrice: number, quantity: number, productremark: string, unitPriceInput?: string}}>({})
 
-  // 生成增强的技术参数（包含4个变量参数）
+  // 生成增强的技术参数（包含4个变量参数，但排除值为"不需要"的参数）
   const generateEnhancedSpecifications = (item: ProjectListItem): string => {
     const baseSpecs = item.product.specifications?.detailed || ''
 
@@ -130,17 +130,17 @@ export default function ProjectListPage() {
     const { selectedVariables } = item
     const variableSpecs: string[] = []
 
-    // 添加4个变量参数到技术参数
-    if (selectedVariables.colorTemperature) {
+    // 添加4个变量参数到技术参数，但排除值为"不需要"的参数
+    if (selectedVariables.colorTemperature && selectedVariables.colorTemperature !== '不需要') {
       variableSpecs.push(`色温: ${selectedVariables.colorTemperature}`)
     }
-    if (selectedVariables.beamAngle) {
+    if (selectedVariables.beamAngle && selectedVariables.beamAngle !== '不需要') {
       variableSpecs.push(`光束角: ${selectedVariables.beamAngle}`)
     }
-    if (selectedVariables.appearanceColor) {
+    if (selectedVariables.appearanceColor && selectedVariables.appearanceColor !== '不需要') {
       variableSpecs.push(`外观颜色: ${selectedVariables.appearanceColor}`)
     }
-    if (selectedVariables.controlMethod) {
+    if (selectedVariables.controlMethod && selectedVariables.controlMethod !== '不需要') {
       variableSpecs.push(`控制方式: ${selectedVariables.controlMethod}`)
     }
 

@@ -149,12 +149,13 @@ export class VariableConfigModel {
         type: 'controlMethod',
         label: '控制方式',
         options: [
-          { value: 'ON/OFF', code: 'O', isDefault: true, order: 1 },
-          { value: '0-10V', code: 'V', isDefault: false, order: 2 },
-          { value: 'DALI', code: 'D', isDefault: false, order: 3 },
-          { value: 'BLE', code: 'B', isDefault: false, order: 4 },
-          { value: '调光', code: 'DIM', isDefault: false, order: 5 },
-          { value: 'PWM', code: 'P', isDefault: false, order: 6 }
+          { value: '不需要', code: 'N', isDefault: false, order: 1 },
+          { value: 'ON/OFF', code: 'O', isDefault: true, order: 2 },
+          { value: '0-10V', code: 'V', isDefault: false, order: 3 },
+          { value: 'DALI', code: 'D', isDefault: false, order: 4 },
+          { value: 'BLE', code: 'B', isDefault: false, order: 5 },
+          { value: '调光', code: 'DIM', isDefault: false, order: 6 },
+          { value: 'PWM', code: 'P', isDefault: false, order: 7 }
         ],
         isRequired: false,
         allowMultiple: false,
