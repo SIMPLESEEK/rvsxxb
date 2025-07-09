@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { ImageThumbnail } from '@/components/ui/ImageThumbnail'
 import { DynamicProductForm } from '@/components/admin/DynamicProductForm'
 import { CopyableCell } from '@/components/ui/CopyableCell'
+import { ProductTypeFilter } from '@/components/ui/ProductTypeFilter'
 import { useAuth } from '@/providers/AuthProvider'
 
 interface Product {
@@ -47,6 +48,7 @@ export default function ProductsV2Page() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedProductType, setSelectedProductType] = useState('')
   const [selectedProductId, setSelectedProductId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -69,13 +71,21 @@ export default function ProductsV2Page() {
 
   // 过滤产品
   const filteredProducts = products.filter(product => {
-    if (!searchTerm) return true
-    const searchLower = searchTerm.toLowerCase()
-    return (
-      product.model.toLowerCase().includes(searchLower) ||
-      product.productType.toLowerCase().includes(searchLower) ||
-      product.brand.toLowerCase().includes(searchLower)
-    )
+    // 首先应用搜索筛选
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase()
+      const matchesSearch = (
+        product.model.toLowerCase().includes(searchLower) ||
+        product.productType.toLowerCase().includes(searchLower) ||
+        product.brand.toLowerCase().includes(searchLower)
+      )
+      if (!matchesSearch) return false
+    }
+
+    // 然后应用产品类型筛选
+    if (selectedProductType && product.productType !== selectedProductType) return false
+
+    return true
   })
 
   // 分页计算
@@ -87,7 +97,7 @@ export default function ProductsV2Page() {
   // 重置页码当过滤结果改变时
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchTerm, filteredProducts.length])
+  }, [searchTerm, selectedProductType, filteredProducts.length])
 
   const loadProducts = async () => {
     setIsLoading(true)
@@ -495,6 +505,14 @@ export default function ProductsV2Page() {
                       第 {currentPage} 页，共 {Math.ceil(filteredProducts.length / itemsPerPage)} 页
                     </div>
                   </div>
+
+                  {/* 产品类型筛选 */}
+                  <ProductTypeFilter
+                    products={products}
+                    selectedType={selectedProductType}
+                    onTypeChange={setSelectedProductType}
+                    className="mb-4"
+                  />
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                     {paginatedProducts.map((product) => (

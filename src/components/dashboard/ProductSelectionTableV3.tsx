@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ImageThumbnail } from '@/components/ui/ImageThumbnail'
 import { CopyableCell } from '@/components/ui/CopyableCell'
 import { ClickableModelCell } from '@/components/ui/ClickableModelCell'
+import { ProductTypeFilter } from '@/components/ui/ProductTypeFilter'
 
 import { Loader2, Search, Check, Plus, Info } from 'lucide-react'
 import { getNestedValue, shouldShowPrice, getPriceDisplay } from '@/lib/utils'
@@ -30,6 +31,7 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedProductType, setSelectedProductType] = useState('')
   const [selectedVariables, setSelectedVariables] = useState<SelectedVariables>({})
   const [generatedModels, setGeneratedModels] = useState<{[productId: string]: string}>({})
 
@@ -185,7 +187,15 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
     )
   }
 
-  const filteredProducts = products.filter(product => smartSearch(product, searchTerm))
+  const filteredProducts = products.filter(product => {
+    // 首先应用智能搜索筛选
+    if (!smartSearch(product, searchTerm)) return false
+
+    // 然后应用产品类型筛选
+    if (selectedProductType && product.productType !== selectedProductType) return false
+
+    return true
+  })
 
   // 分页计算
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
@@ -196,7 +206,7 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
   // 重置页码当过滤结果改变时
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchTerm, filteredProducts.length])
+  }, [searchTerm, selectedProductType, filteredProducts.length])
 
   // 检查是否所有必需的变量都已选择
   const isAllVariablesSelected = (variables: {[key in VariableType]?: string}): boolean => {
@@ -583,6 +593,14 @@ export function ProductSelectionTableV3({ userRole }: ProductSelectionTableV3Pro
           )}
         </div>
       </div>
+
+      {/* 产品类型筛选 */}
+      <ProductTypeFilter
+        products={products}
+        selectedType={selectedProductType}
+        onTypeChange={setSelectedProductType}
+        className="print:hidden"
+      />
 
       {/* 移动端提示 */}
       <div className="bg-blue-50 border border-blue-200 rounded-md p-3 sm:hidden print:hidden">
