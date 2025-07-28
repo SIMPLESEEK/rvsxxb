@@ -88,12 +88,13 @@ if (process.env.NODE_ENV === 'development') {
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
   const globalWithMongo = global as typeof globalThis & {
     _mongoClientPromise?: Promise<MongoClient>
-    _mongoConnectionCount?: number
   }
 
   if (!globalWithMongo._mongoClientPromise) {
+    console.log('[MongoDB] 创建开发环境全局连接')
     globalWithMongo._mongoClientPromise = createConnection()
-    globalWithMongo._mongoConnectionCount = 0
+  } else {
+    console.log('[MongoDB] 复用开发环境全局连接')
   }
   clientPromise = globalWithMongo._mongoClientPromise
 } else {
